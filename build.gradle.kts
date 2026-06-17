@@ -1,6 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.3.21"
-    application
+    kotlin("multiplatform") version "2.3.21"
 }
 
 group = "com.neoutils"
@@ -10,18 +9,20 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation(kotlin("test"))
-}
-
 kotlin {
     jvmToolchain(21)
-}
 
-application {
-    mainClass.set("com.neoutils.MainKt")
-}
+    jvm {
+        binaries {
+            executable {
+                mainClass.set("com.neoutils.MainKt")
+            }
+        }
+    }
 
-tasks.test {
-    useJUnitPlatform()
+    sourceSets {
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
+    }
 }
