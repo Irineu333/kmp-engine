@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "2.3.21"
+    application
 }
 
 group = "com.neoutils"
@@ -15,6 +16,10 @@ dependencies {
 
 kotlin {
     jvmToolchain(21)
+}
+
+application {
+    mainClass.set("com.neoutils.MainKt")
 }
 
 tasks.test {
