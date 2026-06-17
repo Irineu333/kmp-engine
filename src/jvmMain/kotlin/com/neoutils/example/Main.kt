@@ -1,5 +1,8 @@
-package com.neoutils
+package com.neoutils.example
 
+import com.neoutils.core.*
+import com.neoutils.greeting
+import com.neoutils.skiko.SceneRenderDelegate
 import org.jetbrains.skiko.SkiaLayer
 import org.jetbrains.skiko.SkiaLayerRenderDelegate
 import java.awt.Dimension
@@ -8,11 +11,28 @@ import javax.swing.SwingUtilities
 import javax.swing.WindowConstants
 
 fun main() {
-    // SkiaLayer is the AWT component that exposes a GPU-accelerated Skia canvas.
+
+    // core
+
+    val scene = SceneTree(
+        root = Node().apply {
+            add(
+                CenteredNode2D().apply {
+                    add(
+                        CenterAlignLabel().apply {
+                            text = "Hello, World!"
+                        },
+                    )
+                },
+            )
+        },
+    )
+
+    // skiko
+
     val skiaLayer = SkiaLayer()
 
-    // SkiaLayerRenderDelegate wraps the scene and fixes content-scale (HiDPI/Retina displays).
-    skiaLayer.renderDelegate = SkiaLayerRenderDelegate(skiaLayer, HelloWorldScene())
+    skiaLayer.renderDelegate = SkiaLayerRenderDelegate(skiaLayer, SceneRenderDelegate(scene))
 
     SwingUtilities.invokeLater {
         val window = JFrame("hello world").apply {
@@ -22,7 +42,6 @@ fun main() {
         skiaLayer.attachTo(window.contentPane)
         skiaLayer.needRender()
         window.pack()
-        // Center the window on the screen (must be called after pack() so the size is known).
         window.setLocationRelativeTo(null)
         window.isVisible = true
     }

@@ -3,7 +3,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
-    kotlin("multiplatform") version "2.3.21"
+    kotlin("multiplatform") version "2.4.0"
 }
 
 group = "com.neoutils"
@@ -36,10 +36,14 @@ val skikoTarget = "$targetOs-$targetArch"
 kotlin {
     jvmToolchain(21)
 
+    compilerOptions {
+        freeCompilerArgs.add("-XXLanguage:+ExplicitBackingFields")
+    }
+
     jvm {
         binaries {
             executable {
-                mainClass.set("com.neoutils.MainKt")
+                mainClass.set("com.neoutils.example.MainKt")
             }
         }
     }
