@@ -1,27 +1,17 @@
 package com.neoutils.example
 
-import com.neoutils.core.*
+import com.neoutils.core.BoundsOverlay
+import com.neoutils.dsl.add
+import com.neoutils.dsl.launch
 import com.neoutils.skiko.SkikoLauncher
 
-fun main() {
-
-    val scene = SceneTree(
-        root = Node().apply {
-            add(
-                CenteredNode2D().apply {
-                    add(
-                        CenterAlignLabel().apply {
-                            text = "Hello, World!"
-                        },
-                    )
-                },
-            )
-            add(BoundsOverlay())
-        },
-    )
-
-    SkikoLauncher().launch(
-        scene = scene,
-        config = LaunchConfig(title = "hello-world"),
-    )
+fun main() = SkikoLauncher().launch(
+    title = "hello-world"
+) {
+    add<CenteredNode2D> {
+        add<CenterAlignLabel> {
+            text = "Hello, World!"
+        }
+    }
+    add<BoundsOverlay>()
 }

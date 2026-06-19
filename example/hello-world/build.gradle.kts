@@ -25,6 +25,7 @@ kotlin {
         jvmMain.dependencies {
             implementation(project(":core"))
             implementation(project(":runtime-skiko"))
+            implementation(project(":core-dsl"))
         }
     }
 }

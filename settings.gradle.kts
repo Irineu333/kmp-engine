@@ -18,5 +18,6 @@ dependencyResolutionManagement {
 rootProject.name = "kmp-engine"
 
 include(":core")
+include(":core-dsl")
 include(":runtime-skiko")
 include(":example:hello-world")
