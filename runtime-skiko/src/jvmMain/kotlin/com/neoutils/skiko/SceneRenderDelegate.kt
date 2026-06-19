@@ -1,5 +1,6 @@
 package com.neoutils.skiko
 
+import com.neoutils.core.FrameClock
 import com.neoutils.core.SceneTree
 import com.neoutils.core.Size
 import org.jetbrains.skia.Canvas
@@ -13,12 +14,16 @@ class SceneRenderDelegate(
 
     private val textMeasurer = SkikoTextMeasurer()
 
+    private val clock = FrameClock()
+
     override fun onRender(
         canvas: Canvas,
         width: Int,
         height: Int,
         nanoTime: Long
     ) {
+        val delta = clock.tick(nanoTime)
+
         canvas.clear(org.jetbrains.skia.Color.WHITE)
 
         renderer.canvas = canvas
@@ -26,7 +31,9 @@ class SceneRenderDelegate(
         scene.size = Size(width.toFloat(), height.toFloat())
         scene.textMeasurer = textMeasurer
 
-        scene.process()
+        scene.ready()
+
+        scene.process(delta)
 
         scene.render(renderer)
     }

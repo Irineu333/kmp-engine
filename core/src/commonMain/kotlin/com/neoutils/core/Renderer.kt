@@ -13,4 +13,11 @@ interface Renderer {
         color: Color,
         fill: Boolean = false,
     )
+
+    fun drawCircle(
+        center: Vec2,
+        radius: Float,
+        color: Color,
+        fill: Boolean = true,
+    )
 }

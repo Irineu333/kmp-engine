@@ -6,7 +6,7 @@ import com.neoutils.dsl.launch
 import com.neoutils.skiko.SkikoLauncher
 
 fun main() = SkikoLauncher().launch(
-    title = "hello-world"
+    title = "hello-world",
 ) {
     add<CenteredNode2D> {
         add<CenterAlignLabel> {

@@ -5,7 +5,7 @@ import com.neoutils.core.Vec2
 
 class CenteredNode2D : Node2D() {
 
-    override fun onProcess() {
+    override fun onProcess(delta: Float) {
         val viewport = tree?.size ?: return
 
         position = Vec2(

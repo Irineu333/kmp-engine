@@ -5,7 +5,7 @@ import com.neoutils.core.Vec2
 
 class CenterAlignLabel : Label() {
 
-    override fun onProcess() {
+    override fun onProcess(delta: Float) {
         val size = getSize()
 
         position = Vec2(
