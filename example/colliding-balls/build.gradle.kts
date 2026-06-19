@@ -13,11 +13,19 @@ kotlin {
         freeCompilerArgs.add("-XXLanguage:+ExplicitBackingFields")
     }
 
-    jvm()
+    jvm {
+        binaries {
+            executable {
+                mainClass.set("com.neoutils.example.colliding.MainKt")
+            }
+        }
+    }
 
     sourceSets {
-        commonTest.dependencies {
-            implementation(kotlin("test"))
+        jvmMain.dependencies {
+            implementation(project(":core"))
+            implementation(project(":runtime-skiko"))
+            implementation(project(":core-dsl"))
         }
     }
 }

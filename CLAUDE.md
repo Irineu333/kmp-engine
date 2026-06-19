@@ -13,6 +13,7 @@ Requires JDK 21 (Kotlin/Gradle via wrapper).
 ```bash
 ./gradlew :example:hello-world:run      # run the basic example
 ./gradlew :example:bouncing-ball:run    # run the physics + delta-time example
+./gradlew :example:colliding-balls:run  # run the ball-to-ball elastic collision example
 ./gradlew build                         # compile all modules
 ./gradlew test                          # run tests (no suite yet — see Testing)
 ```
@@ -30,7 +31,7 @@ example/*  ─→  runtime-skiko ─→ core
 | `core` | Nodes, scene tree, abstract `Renderer`, frame clock, value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`. |
 | `core-dsl` | Scene-building DSL (`scene { add<...> { } }`). Uses `kotlin-reflect`. |
 | `runtime-skiko` | `Renderer` + `Launcher` implementation via Skiko (Skia + Swing). `jvmMain`. |
-| `example/hello-world`, `example/bouncing-ball` | Sample apps. |
+| `example/hello-world`, `example/bouncing-ball`, `example/colliding-balls` | Sample apps. |
 
 ## Architecture invariants
 

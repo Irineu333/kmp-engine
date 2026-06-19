@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/core-dsl" />
             <option value="$PROJECT_DIR$/example" />
             <option value="$PROJECT_DIR$/example/bouncing-ball" />
+            <option value="$PROJECT_DIR$/example/colliding-balls" />
             <option value="$PROJECT_DIR$/example/hello-world" />
             <option value="$PROJECT_DIR$/runtime-skiko" />
           </set>
