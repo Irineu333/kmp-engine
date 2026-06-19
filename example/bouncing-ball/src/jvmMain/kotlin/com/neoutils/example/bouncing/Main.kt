@@ -18,4 +18,7 @@ fun main() = launcher.launch(
     add<BoundsOverlay> {
         color = Color.BLUE
     }
+    add<VelocityOverlay> {
+        color = Color.GREEN
+    }
 }

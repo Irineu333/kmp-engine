@@ -23,4 +23,11 @@ interface Renderer {
         color: Color,
         fill: Boolean = true,
     )
+
+    fun drawLine(
+        start: Vec2,
+        end: Vec2,
+        color: Color,
+        width: Float = 1f,
+    )
 }

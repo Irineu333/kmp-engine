@@ -68,6 +68,22 @@ class SkikoRenderer : Renderer {
         canvas.drawCircle(center.x, center.y, radius, paint)
     }
 
+    override fun drawLine(
+        start: Vec2,
+        end: Vec2,
+        color: Color,
+        width: Float
+    ) {
+        val canvas = canvas ?: return
+
+        val paint = paintFor(color).apply {
+            mode = PaintMode.STROKE
+            strokeWidth = width
+        }
+
+        canvas.drawLine(start.x, start.y, end.x, end.y, paint)
+    }
+
     private fun paintFor(color: Color): Paint {
         return Paint().apply {
             this.color = color.toSkiaArgb()

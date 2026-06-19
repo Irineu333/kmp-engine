@@ -12,7 +12,8 @@ class Ball : Node2D() {
     var radius: Float = 32f
     var color: Color = Color.RED
 
-    private var velocity = Vec2(260f, 200f)
+    var velocity = Vec2(260f, 200f)
+        private set
 
     override fun onReady() {
         val viewport = tree?.size ?: return
