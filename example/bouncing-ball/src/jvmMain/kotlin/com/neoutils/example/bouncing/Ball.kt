@@ -6,13 +6,15 @@ import com.neoutils.core.math.Rect
 import com.neoutils.core.graphics.Renderer
 import com.neoutils.core.math.Size
 import com.neoutils.core.math.Vec2
+import kotlin.math.PI
+import kotlin.random.Random
 
 class Ball : Node2D() {
 
     var radius: Float = 32f
     var color: Color = Color.RED
 
-    var velocity = Vec2(260f, 200f)
+    var velocity = Vec2.fromAngle(Random.nextFloat() * 2f * PI.toFloat()) * 320f
         private set
 
     override fun onReady() {

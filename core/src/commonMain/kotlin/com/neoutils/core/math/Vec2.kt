@@ -1,5 +1,9 @@
 package com.neoutils.core.math
 
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.random.Random
+
 data class Vec2(
     val x: Float,
     val y: Float
@@ -20,5 +24,8 @@ data class Vec2(
     companion object {
         val ZERO: Vec2 = Vec2(0f, 0f)
         val ONE: Vec2 = Vec2(1f, 1f)
+
+        fun random(): Vec2 = Vec2(Random.nextFloat(), Random.nextFloat())
+        fun fromAngle(radians: Float): Vec2 = Vec2(cos(radians), sin(radians))
     }
 }
