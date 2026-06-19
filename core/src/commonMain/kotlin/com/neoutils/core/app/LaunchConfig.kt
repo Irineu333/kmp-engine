@@ -1,4 +1,4 @@
-package com.neoutils.core
+package com.neoutils.core.app
 
 data class LaunchConfig(
     val title: String = "kmp-engine",

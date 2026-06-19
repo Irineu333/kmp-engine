@@ -1,4 +1,4 @@
-package com.neoutils.core
+package com.neoutils.core.math
 
 data class Rect(
     val position: Vec2,

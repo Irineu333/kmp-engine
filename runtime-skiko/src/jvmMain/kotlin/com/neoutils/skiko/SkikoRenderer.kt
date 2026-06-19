@@ -1,9 +1,9 @@
 package com.neoutils.skiko
 
-import com.neoutils.core.Color
-import com.neoutils.core.Rect
-import com.neoutils.core.Renderer
-import com.neoutils.core.Vec2
+import com.neoutils.core.graphics.Color
+import com.neoutils.core.math.Rect
+import com.neoutils.core.graphics.Renderer
+import com.neoutils.core.math.Vec2
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.PaintMode

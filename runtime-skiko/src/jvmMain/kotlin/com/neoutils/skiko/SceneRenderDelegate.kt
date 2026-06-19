@@ -1,8 +1,8 @@
 package com.neoutils.skiko
 
-import com.neoutils.core.FrameClock
-import com.neoutils.core.SceneTree
-import com.neoutils.core.Size
+import com.neoutils.core.time.FrameClock
+import com.neoutils.core.scene.SceneTree
+import com.neoutils.core.math.Size
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skiko.SkikoRenderDelegate
 

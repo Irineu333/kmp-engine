@@ -1,6 +1,6 @@
 package com.neoutils.example
 
-import com.neoutils.core.BoundsOverlay
+import com.neoutils.core.scene.BoundsOverlay
 import com.neoutils.dsl.add
 import com.neoutils.dsl.launch
 import com.neoutils.skiko.SkikoLauncher

@@ -1,9 +1,9 @@
 package com.neoutils.dsl
 
-import com.neoutils.core.LaunchConfig
-import com.neoutils.core.Launcher
-import com.neoutils.core.Node
-import com.neoutils.core.SceneTree
+import com.neoutils.core.app.LaunchConfig
+import com.neoutils.core.app.Launcher
+import com.neoutils.core.scene.Node
+import com.neoutils.core.scene.SceneTree
 import kotlin.reflect.full.createInstance
 
 inline fun <reified T : Node> node(

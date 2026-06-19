@@ -1,4 +1,7 @@
-package com.neoutils.core
+package com.neoutils.core.graphics
+
+import com.neoutils.core.math.Rect
+import com.neoutils.core.math.Vec2
 
 interface Renderer {
     fun drawText(

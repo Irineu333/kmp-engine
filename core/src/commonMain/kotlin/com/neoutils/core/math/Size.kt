@@ -1,4 +1,4 @@
-package com.neoutils.core
+package com.neoutils.core.math
 
 data class Size(
     val width: Float,

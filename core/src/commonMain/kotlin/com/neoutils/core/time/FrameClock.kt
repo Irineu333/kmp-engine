@@ -1,4 +1,4 @@
-package com.neoutils.core
+package com.neoutils.core.time
 
 class FrameClock {
 

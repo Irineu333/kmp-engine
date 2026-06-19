@@ -1,8 +1,8 @@
 package com.neoutils.skiko
 
-import com.neoutils.core.LaunchConfig
-import com.neoutils.core.Launcher
-import com.neoutils.core.SceneTree
+import com.neoutils.core.app.LaunchConfig
+import com.neoutils.core.app.Launcher
+import com.neoutils.core.scene.SceneTree
 import org.jetbrains.skiko.SkiaLayer
 import org.jetbrains.skiko.SkiaLayerRenderDelegate
 import java.awt.Dimension

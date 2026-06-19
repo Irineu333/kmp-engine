@@ -1,4 +1,10 @@
-package com.neoutils.core
+package com.neoutils.core.scene
+
+import com.neoutils.core.graphics.Color
+import com.neoutils.core.graphics.Renderer
+import com.neoutils.core.math.Rect
+import com.neoutils.core.math.Size
+import com.neoutils.core.math.Vec2
 
 open class Label : Node2D() {
 

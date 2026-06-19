@@ -1,7 +1,7 @@
 package com.neoutils.skiko
 
-import com.neoutils.core.Size
-import com.neoutils.core.TextMeasurer
+import com.neoutils.core.math.Size
+import com.neoutils.core.graphics.TextMeasurer
 
 class SkikoTextMeasurer : TextMeasurer {
 

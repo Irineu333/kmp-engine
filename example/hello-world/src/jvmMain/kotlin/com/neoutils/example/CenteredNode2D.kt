@@ -1,7 +1,7 @@
 package com.neoutils.example
 
-import com.neoutils.core.Node2D
-import com.neoutils.core.Vec2
+import com.neoutils.core.scene.Node2D
+import com.neoutils.core.math.Vec2
 
 class CenteredNode2D : Node2D() {
 

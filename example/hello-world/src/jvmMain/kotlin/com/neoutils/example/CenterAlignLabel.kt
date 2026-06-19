@@ -1,7 +1,7 @@
 package com.neoutils.example
 
-import com.neoutils.core.Label
-import com.neoutils.core.Vec2
+import com.neoutils.core.scene.Label
+import com.neoutils.core.math.Vec2
 
 class CenterAlignLabel : Label() {
 

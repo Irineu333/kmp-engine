@@ -1,4 +1,8 @@
-package com.neoutils.core
+package com.neoutils.core.scene
+
+import com.neoutils.core.graphics.Renderer
+import com.neoutils.core.graphics.TextMeasurer
+import com.neoutils.core.math.Size
 
 class SceneTree(
     val root: Node,

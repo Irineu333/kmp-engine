@@ -1,4 +1,6 @@
-package com.neoutils.core
+package com.neoutils.core.scene
+
+import com.neoutils.core.graphics.Renderer
 
 open class Node {
 

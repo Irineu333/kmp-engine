@@ -1,11 +1,11 @@
 package com.neoutils.example.bouncing
 
-import com.neoutils.core.Color
-import com.neoutils.core.Node2D
-import com.neoutils.core.Rect
-import com.neoutils.core.Renderer
-import com.neoutils.core.Size
-import com.neoutils.core.Vec2
+import com.neoutils.core.graphics.Color
+import com.neoutils.core.scene.Node2D
+import com.neoutils.core.math.Rect
+import com.neoutils.core.graphics.Renderer
+import com.neoutils.core.math.Size
+import com.neoutils.core.math.Vec2
 
 class Ball : Node2D() {
 
