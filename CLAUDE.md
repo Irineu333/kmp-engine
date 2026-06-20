@@ -15,6 +15,7 @@ Requires JDK 21 (Kotlin/Gradle via wrapper).
 ./gradlew :example:bouncing-ball:run    # run the physics + delta-time example
 ./gradlew :example:colliding-balls:run  # run the ball-to-ball elastic collision example
 ./gradlew :example:keyboard-input:run   # run the keyboard input example
+./gradlew :example:pong:run             # run the two-player Pong example
 ./gradlew build                         # compile all modules
 ./gradlew test                          # run tests (no suite yet — see Testing)
 ```
@@ -32,7 +33,7 @@ example/*  ─→  runtime-skiko ─→ core
 | `core` | Nodes, scene tree, abstract `Renderer`, frame clock, value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`. |
 | `core-dsl` | Scene-building DSL (`scene { add<...> { } }`). Uses `kotlin-reflect`. |
 | `runtime-skiko` | `Renderer` + `Launcher` implementation via Skiko (Skia + Swing). `jvmMain`. |
-| `example/hello-world`, `example/bouncing-ball`, `example/colliding-balls`, `example/keyboard-input` | Sample apps. |
+| `example/hello-world`, `example/bouncing-ball`, `example/colliding-balls`, `example/keyboard-input`, `example/pong` | Sample apps. |
 
 ## Architecture invariants
 
@@ -60,8 +61,10 @@ Nodes extend `Node` (or `Node2D`) and override:
 - `onProcess(delta: Float)` — per frame; `delta` is seconds since last frame
   (use it for frame-rate-independent movement).
 - `onInput(event: InputEvent)` — per input event (e.g. `KeyEvent`). The runtime
-  captures backend events, enqueues them, and `SceneTree.input(event)` propagates
-  each one through the tree at the start of a frame, before `onProcess`.
+  captures backend events, enqueues them, and `SceneTree.dispatchInput(event)`
+  propagates each one through the tree at the start of a frame, before `onProcess`.
+  For continuous input, poll the derived state instead: `tree.input.isPressed(key)` /
+  `tree.input.isJustPressed(key)` (read inside `onProcess`).
 - `onDraw(renderer: Renderer)` — per frame; draw via the `Renderer`.
 
 `SceneTree` walks the tree depth-first for each phase.

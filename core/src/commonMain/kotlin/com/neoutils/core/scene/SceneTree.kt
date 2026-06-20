@@ -3,6 +3,8 @@ package com.neoutils.core.scene
 import com.neoutils.core.graphics.Renderer
 import com.neoutils.core.graphics.TextMeasurer
 import com.neoutils.core.input.InputEvent
+import com.neoutils.core.input.InputState
+import com.neoutils.core.input.KeyEvent
 import com.neoutils.core.math.Size
 
 class SceneTree(
@@ -12,6 +14,8 @@ class SceneTree(
     var size: Size = Size.ZERO
 
     var textMeasurer: TextMeasurer? = null
+
+    val input: InputState = InputState()
 
     fun ready() {
         ready(root)
@@ -38,14 +42,15 @@ class SceneTree(
         }
     }
 
-    fun input(event: InputEvent) {
-        input(root, event)
+    fun dispatchInput(event: InputEvent) {
+        if (event is KeyEvent) input.update(event)
+        dispatchInput(root, event)
     }
 
-    private fun input(node: Node, event: InputEvent) {
+    private fun dispatchInput(node: Node, event: InputEvent) {
         node.onInput(event)
         node.children.forEach {
-            input(it, event)
+            dispatchInput(it, event)
         }
     }
 

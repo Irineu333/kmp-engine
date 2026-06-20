@@ -41,9 +41,10 @@ class SceneRenderDelegate(
 
         scene.ready()
 
+        scene.input.clearJustPressed()
         while (true) {
             val event = inputEvents.poll() ?: break
-            scene.input(event)
+            scene.dispatchInput(event)
         }
 
         scene.process(delta)

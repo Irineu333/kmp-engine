@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/example/colliding-balls" />
             <option value="$PROJECT_DIR$/example/hello-world" />
             <option value="$PROJECT_DIR$/example/keyboard-input" />
+            <option value="$PROJECT_DIR$/example/pong" />
             <option value="$PROJECT_DIR$/runtime-skiko" />
           </set>
         </option>
