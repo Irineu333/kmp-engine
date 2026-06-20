@@ -1,10 +1,12 @@
 package com.neoutils.skiko
 
-import com.neoutils.core.time.FrameClock
-import com.neoutils.core.scene.SceneTree
+import com.neoutils.core.input.InputEvent
 import com.neoutils.core.math.Size
+import com.neoutils.core.scene.SceneTree
+import com.neoutils.core.time.FrameClock
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skiko.SkikoRenderDelegate
+import java.util.concurrent.ConcurrentLinkedQueue
 
 class SceneRenderDelegate(
     private val scene: SceneTree,
@@ -15,6 +17,12 @@ class SceneRenderDelegate(
     private val textMeasurer = SkikoTextMeasurer()
 
     private val clock = FrameClock()
+
+    private val inputEvents = ConcurrentLinkedQueue<InputEvent>()
+
+    fun enqueue(event: InputEvent) {
+        inputEvents.add(event)
+    }
 
     override fun onRender(
         canvas: Canvas,
@@ -32,6 +40,11 @@ class SceneRenderDelegate(
         scene.textMeasurer = textMeasurer
 
         scene.ready()
+
+        while (true) {
+            val event = inputEvents.poll() ?: break
+            scene.input(event)
+        }
 
         scene.process(delta)
 

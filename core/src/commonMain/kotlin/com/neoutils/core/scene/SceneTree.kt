@@ -2,6 +2,7 @@ package com.neoutils.core.scene
 
 import com.neoutils.core.graphics.Renderer
 import com.neoutils.core.graphics.TextMeasurer
+import com.neoutils.core.input.InputEvent
 import com.neoutils.core.math.Size
 
 class SceneTree(
@@ -34,6 +35,17 @@ class SceneTree(
         node.onProcess(delta)
         node.children.forEach {
             process(it, delta)
+        }
+    }
+
+    fun input(event: InputEvent) {
+        input(root, event)
+    }
+
+    private fun input(node: Node, event: InputEvent) {
+        node.onInput(event)
+        node.children.forEach {
+            input(it, event)
         }
     }
 

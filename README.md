@@ -39,6 +39,7 @@ JDK 21. Kotlin e Gradle via wrapper.
 ./gradlew :example:hello-world:run
 ./gradlew :example:bouncing-ball:run
 ./gradlew :example:colliding-balls:run
+./gradlew :example:keyboard-input:run
 ```
 
 ## Módulos
@@ -51,4 +52,5 @@ JDK 21. Kotlin e Gradle via wrapper.
 | `example/hello-world` | Exemplo básico. |
 | `example/bouncing-ball` | Exemplo com física + delta time. |
 | `example/colliding-balls` | Exemplo de colisão elástica entre bolas. |
+| `example/keyboard-input` | Exemplo de input de teclado (`onInput`). |
 ```
