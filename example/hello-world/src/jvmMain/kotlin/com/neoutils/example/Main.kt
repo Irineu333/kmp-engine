@@ -2,10 +2,9 @@ package com.neoutils.example
 
 import com.neoutils.core.scene.BoundsOverlay
 import com.neoutils.dsl.add
-import com.neoutils.dsl.launch
-import com.neoutils.skiko.SkikoLauncher
+import com.neoutils.skiko.runSkikoWindow
 
-fun main() = SkikoLauncher().launch(
+fun main() = runSkikoWindow(
     title = "hello-world",
 ) {
     add<CenteredNode2D> {

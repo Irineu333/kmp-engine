@@ -1,12 +1,9 @@
 package com.neoutils.example.keyboard
 
 import com.neoutils.dsl.add
-import com.neoutils.dsl.launch
-import com.neoutils.skiko.SkikoLauncher
+import com.neoutils.skiko.runSkikoWindow
 
-private val launcher = SkikoLauncher()
-
-fun main() = launcher.launch(
+fun main() = runSkikoWindow(
     title = "keyboard-input",
 ) {
     add<KeyDisplay>()

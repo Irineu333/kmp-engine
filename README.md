@@ -12,13 +12,13 @@ O núcleo é **backend-agnostic**: desenha contra um `Renderer` abstrato — com
 - **Scene graph** — `Node` / `Node2D` em árvore.
 - **Delta time** — `FrameClock` para movimento independente de FPS.
 - **Renderer abstrato** — backend trocável (Skiko padrão).
-- **DSL** — monta cenas com `launch { add<...> { } }`.
+- **DSL** — monta cenas com `SkikoWindow { add<...> { } }`.
 - **BoundsOverlay** — debug plugável; desenha os bounds dos nós sobre a cena.
 
 ## Exemplo
 
 ```kotlin
-fun main() = SkikoLauncher().launch(title = "bouncing-ball") {
+fun main() = SkikoWindow(title = "bouncing-ball") {
     add<Ball> {
         radius = 32f
         color = Color.RED
@@ -49,7 +49,7 @@ JDK 21. Kotlin e Gradle via wrapper.
 |---|---|
 | `core` | Nodes, scene tree, `Renderer` abstrato, frame clock, tipos (`Vec2`, `Color`, `Rect`, `Size`). |
 | `core-dsl` | DSL para construir cenas. |
-| `runtime-skiko` | Implementação do `Renderer` com Skiko (Skia + Swing). |
+| `runtime-skiko` | Implementação do `Renderer` e da janela (`SkikoWindow`) com Skiko (Skia + Swing). |
 | `example/hello-world` | Exemplo básico. |
 | `example/bouncing-ball` | Exemplo com física + delta time. |
 | `example/colliding-balls` | Exemplo de colisão elástica entre bolas. |

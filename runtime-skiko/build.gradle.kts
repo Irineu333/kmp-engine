@@ -37,6 +37,7 @@ kotlin {
     sourceSets {
         jvmMain.dependencies {
             api(project(":core"))
+            api(project(":core-dsl"))
             api("org.jetbrains.skiko:skiko-awt-runtime-$skikoTarget:${libs.versions.skiko.get()}")
         }
     }

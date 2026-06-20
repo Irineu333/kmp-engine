@@ -23,16 +23,15 @@ Requires JDK 21 (Kotlin/Gradle via wrapper).
 ## Modules & dependency direction
 
 ```
-example/*  ─→  core-dsl ─┐
-example/*  ─→  runtime-skiko ─→ core
-                          └─→ core
+example/*  ─→  core-dsl ──────→ core
+example/*  ─→  runtime-skiko ─→ core-dsl ─→ core
 ```
 
 | Module | Role |
 |---|---|
 | `core` | Nodes, scene tree, abstract `Renderer`, frame clock, value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`. |
 | `core-dsl` | Scene-building DSL (`scene { add<...> { } }`). Uses `kotlin-reflect`. |
-| `runtime-skiko` | `Renderer` + `Launcher` implementation via Skiko (Skia + Swing). `jvmMain`. |
+| `runtime-skiko` | `Renderer` + desktop window (`SkikoWindow`) implementation via Skiko (Skia + Swing). Depends on `core-dsl` to expose the `SkikoWindow { add<...> }` scene-builder. `jvmMain`. |
 | `example/hello-world`, `example/bouncing-ball`, `example/colliding-balls`, `example/keyboard-input`, `example/pong` | Sample apps. |
 
 ## Architecture invariants
@@ -41,8 +40,10 @@ example/*  ─→  runtime-skiko ─→ core
   through the `Renderer` interface. `runtime-skiko` is the only module with a backend.
 - **`core` logic stays in `commonMain`** (no JVM-only APIs), keeping the multiplatform
   path open even though only the JVM target runs today.
-- **Dependency direction is one-way:** `example → core-dsl`/`runtime-skiko → core`.
-  `core` knows nothing about the DSL or any runtime.
+- **Dependency direction is one-way:** `example → runtime-skiko → core-dsl → core`
+  (examples also depend on `core-dsl` directly). `core` knows nothing about the DSL
+  or any runtime. The desktop window lives in `runtime-skiko` (`SkikoWindow`), never
+  in `core` — windowing is a desktop-only concern, keeping the path open for Android.
 
 ## Conventions
 

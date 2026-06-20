@@ -1,21 +1,22 @@
 package com.neoutils.skiko
 
-import com.neoutils.core.app.LaunchConfig
-import com.neoutils.core.app.Launcher
+import com.neoutils.core.input.KeyEvent
+import com.neoutils.core.scene.Node
 import com.neoutils.core.scene.SceneTree
 import org.jetbrains.skiko.SkiaLayer
 import org.jetbrains.skiko.SkiaLayerRenderDelegate
 import java.awt.Dimension
 import java.awt.event.KeyAdapter
-import java.awt.event.KeyEvent
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 import javax.swing.WindowConstants
-import com.neoutils.core.input.KeyEvent as CoreKeyEvent
 
-class SkikoLauncher : Launcher {
+class SkikoWindow(
+    private val title: String = "kmp-engine",
+    private val config: WindowSize = WindowSize()
+) {
 
-    override fun launch(scene: SceneTree, config: LaunchConfig) {
+    fun run(scene: SceneTree) {
 
         val skiaLayer = SkiaLayer()
 
@@ -25,17 +26,17 @@ class SkikoLauncher : Launcher {
 
         skiaLayer.isFocusable = true
         skiaLayer.addKeyListener(object : KeyAdapter() {
-            override fun keyPressed(e: KeyEvent) {
-                delegate.enqueue(CoreKeyEvent(keyOf(e.keyCode), pressed = true))
+            override fun keyPressed(e: java.awt.event.KeyEvent) {
+                delegate.enqueue(KeyEvent(keyOf(e.keyCode), pressed = true))
             }
 
-            override fun keyReleased(e: KeyEvent) {
-                delegate.enqueue(CoreKeyEvent(keyOf(e.keyCode), pressed = false))
+            override fun keyReleased(e: java.awt.event.KeyEvent) {
+                delegate.enqueue(KeyEvent(keyOf(e.keyCode), pressed = false))
             }
         })
 
         SwingUtilities.invokeLater {
-            val window = JFrame(config.title).apply {
+            val window = JFrame(title).apply {
                 defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
                 preferredSize = Dimension(config.width, config.height)
             }
@@ -47,4 +48,12 @@ class SkikoLauncher : Launcher {
             skiaLayer.requestFocusInWindow()
         }
     }
+}
+
+fun runSkikoWindow(
+    title: String = "kmp-engine",
+    size: WindowSize = WindowSize(),
+    root: Node.() -> Unit
+) {
+    SkikoWindow(title, size).run(SceneTree(Node().apply(root)))
 }

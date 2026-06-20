@@ -1,14 +1,11 @@
 package com.neoutils.example.bouncing
 
-import com.neoutils.core.scene.BoundsOverlay
 import com.neoutils.core.graphics.Color
+import com.neoutils.core.scene.BoundsOverlay
 import com.neoutils.dsl.add
-import com.neoutils.dsl.launch
-import com.neoutils.skiko.SkikoLauncher
+import com.neoutils.skiko.runSkikoWindow
 
-private val launcher = SkikoLauncher()
-
-fun main() = launcher.launch(
+fun main() = runSkikoWindow(
     title = "bouncing-ball",
 ) {
     add<Ball> {

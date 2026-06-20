@@ -3,15 +3,10 @@ package com.neoutils.example.colliding
 import com.neoutils.core.graphics.Color
 import com.neoutils.core.scene.BoundsOverlay
 import com.neoutils.dsl.add
-import com.neoutils.dsl.launch
-import com.neoutils.skiko.SkikoLauncher
+import com.neoutils.skiko.runSkikoWindow
 
-private val launcher = SkikoLauncher()
-
-fun main() = launcher.launch(
+fun main() = runSkikoWindow(
     title = "colliding-balls",
-    width = 800,
-    height = 600,
 ) {
     repeat(8) {
         add<Ball>()
