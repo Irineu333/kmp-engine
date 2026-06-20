@@ -6,5 +6,7 @@ import com.neoutils.skiko.runSkikoWindow
 fun main() = runSkikoWindow(
     title = "keyboard-input",
 ) {
-    add<KeyDisplay>()
+    scene("main") {
+        add<KeyDisplay>()
+    }
 }

@@ -7,10 +7,12 @@ import com.neoutils.skiko.runSkikoWindow
 fun main() = runSkikoWindow(
     title = "hello-world",
 ) {
-    add<CenteredNode2D> {
-        add<CenterAlignLabel> {
-            text = "Hello, World!"
+    scene("main") {
+        add<CenteredNode2D> {
+            add<CenterAlignLabel> {
+                text = "Hello, World!"
+            }
         }
+        add<BoundsOverlay>()
     }
-    add<BoundsOverlay>()
 }

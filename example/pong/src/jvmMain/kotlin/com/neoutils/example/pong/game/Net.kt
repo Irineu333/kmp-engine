@@ -1,4 +1,4 @@
-package com.neoutils.example.pong
+package com.neoutils.example.pong.game
 
 import com.neoutils.core.graphics.Color
 import com.neoutils.core.graphics.Renderer

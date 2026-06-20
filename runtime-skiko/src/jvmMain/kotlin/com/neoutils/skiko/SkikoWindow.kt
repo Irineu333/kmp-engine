@@ -1,8 +1,8 @@
 package com.neoutils.skiko
 
 import com.neoutils.core.input.KeyEvent
-import com.neoutils.core.scene.Node
-import com.neoutils.core.scene.SceneTree
+import com.neoutils.core.scene.SceneManager
+import com.neoutils.dsl.ScenesBuilder
 import org.jetbrains.skiko.SkiaLayer
 import org.jetbrains.skiko.SkiaLayerRenderDelegate
 import java.awt.Dimension
@@ -16,11 +16,11 @@ class SkikoWindow(
     private val config: WindowSize = WindowSize()
 ) {
 
-    fun run(scene: SceneTree) {
+    fun run(manager: SceneManager) {
 
         val skiaLayer = SkiaLayer()
 
-        val delegate = SceneRenderDelegate(scene)
+        val delegate = SceneRenderDelegate(manager)
 
         skiaLayer.renderDelegate = SkiaLayerRenderDelegate(skiaLayer, delegate)
 
@@ -53,7 +53,8 @@ class SkikoWindow(
 fun runSkikoWindow(
     title: String = "kmp-engine",
     size: WindowSize = WindowSize(),
-    root: Node.() -> Unit
+    block: ScenesBuilder.() -> Unit,
 ) {
-    SkikoWindow(title, size).run(SceneTree(Node().apply(root)))
+    val factories = ScenesBuilder().apply(block).factories
+    SkikoWindow(title, size).run(SceneManager(factories))
 }

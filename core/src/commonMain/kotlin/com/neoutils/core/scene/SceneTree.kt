@@ -15,7 +15,13 @@ class SceneTree(
 
     var textMeasurer: TextMeasurer? = null
 
+    var manager: SceneManager? = null
+
     val input: InputState = InputState()
+
+    fun changeScene(name: String) {
+        manager?.change(name)
+    }
 
     fun ready() {
         ready(root)

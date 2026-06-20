@@ -2,14 +2,14 @@ package com.neoutils.skiko
 
 import com.neoutils.core.input.InputEvent
 import com.neoutils.core.math.Size
-import com.neoutils.core.scene.SceneTree
+import com.neoutils.core.scene.SceneManager
 import com.neoutils.core.time.FrameClock
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skiko.SkikoRenderDelegate
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class SceneRenderDelegate(
-    private val scene: SceneTree,
+    private val manager: SceneManager,
 ) : SkikoRenderDelegate {
 
     private val renderer = SkikoRenderer()
@@ -30,6 +30,10 @@ class SceneRenderDelegate(
         height: Int,
         nanoTime: Long
     ) {
+        // Snapshot the active scene for the whole frame: a changeScene() during
+        // process only swaps manager.current; the new scene enters next frame.
+        val scene = manager.current
+
         val delta = clock.tick(nanoTime)
 
         canvas.clear(org.jetbrains.skia.Color.WHITE)

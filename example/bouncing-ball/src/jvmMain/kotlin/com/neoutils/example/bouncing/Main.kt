@@ -8,14 +8,16 @@ import com.neoutils.skiko.runSkikoWindow
 fun main() = runSkikoWindow(
     title = "bouncing-ball",
 ) {
-    add<Ball> {
-        radius = 32f
-        color = Color.RED
-    }
-    add<BoundsOverlay> {
-        color = Color.BLUE
-    }
-    add<VelocityOverlay> {
-        color = Color.GREEN
+    scene("main") {
+        add<Ball> {
+            radius = 32f
+            color = Color.RED
+        }
+        add<BoundsOverlay> {
+            color = Color.BLUE
+        }
+        add<VelocityOverlay> {
+            color = Color.GREEN
+        }
     }
 }

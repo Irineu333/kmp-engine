@@ -16,8 +16,8 @@ Requires JDK 21 (Kotlin/Gradle via wrapper).
 ./gradlew :example:colliding-balls:run  # run the ball-to-ball elastic collision example
 ./gradlew :example:keyboard-input:run   # run the keyboard input example
 ./gradlew :example:pong:run             # run the two-player Pong example
-./gradlew build                         # compile all modules
-./gradlew test                          # run tests (no suite yet — see Testing)
+./gradlew build                         # compile all modules + run tests (check)
+./gradlew :core:jvmTest                 # run a module's tests (no root `test` task — KMP)
 ```
 
 ## Modules & dependency direction
@@ -29,9 +29,9 @@ example/*  ─→  runtime-skiko ─→ core-dsl ─→ core
 
 | Module | Role |
 |---|---|
-| `core` | Nodes, scene tree, abstract `Renderer`, frame clock, value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`. |
-| `core-dsl` | Scene-building DSL (`scene { add<...> { } }`). Uses `kotlin-reflect`. |
-| `runtime-skiko` | `Renderer` + desktop window (`SkikoWindow`) implementation via Skiko (Skia + Swing). Depends on `core-dsl` to expose the `SkikoWindow { add<...> }` scene-builder. `jvmMain`. |
+| `core` | Nodes, scene tree, `SceneManager` (named scenes + runtime switching), abstract `Renderer`, frame clock, value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`. |
+| `core-dsl` | Scene-building DSL (`scene("name") { add<...> { } }` via `ScenesBuilder`). Uses `kotlin-reflect`. |
+| `runtime-skiko` | `Renderer` + desktop window (`SkikoWindow`) implementation via Skiko (Skia + Swing). Depends on `core-dsl` to expose the `runSkikoWindow { scene(...) { } }` scene-builder. `jvmMain`. |
 | `example/hello-world`, `example/bouncing-ball`, `example/colliding-balls`, `example/keyboard-input`, `example/pong` | Sample apps. |
 
 ## Architecture invariants
@@ -70,7 +70,28 @@ Nodes extend `Node` (or `Node2D`) and override:
 
 `SceneTree` walks the tree depth-first for each phase.
 
+## Scenes & scene switching
+
+An app registers one or more named scenes; the **first** one registered is the
+starting scene by convention:
+
+```kotlin
+runSkikoWindow(title = "pong") {
+    scene("menu") { add<...>() }   // first → initial scene
+    scene("pong") { add<...>() }
+}
+```
+
+`SceneManager` (in `core`) holds the named `SceneFactory` entries and the active
+`SceneTree` (`manager.current`); it starts on the first registered scene. A node
+switches scenes via `tree?.changeScene("name")` (delegates to `SceneManager.change`).
+Each `SceneFactory.create()` rebuilds its scene from scratch on every switch, so
+re-entering a scene starts it clean. The runtime snapshots `manager.current` at the
+start of each frame, so a `changeScene` during `onProcess`/`onInput` takes effect on
+the next frame.
+
 ## Testing
 
-No test suite exists yet. New non-trivial changes should add tests; place them in
-each module's `commonTest`/`jvmTest` source set and run with `./gradlew test`.
+Tests live in each module's `commonTest`/`jvmTest` source set. The root `test` task
+doesn't exist (KMP); run `./gradlew build` (runs `check`/`allTests`) or a module task
+like `./gradlew :core:jvmTest`. New non-trivial changes should add tests.

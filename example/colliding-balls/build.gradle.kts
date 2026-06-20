@@ -25,7 +25,7 @@ kotlin {
         jvmMain.dependencies {
             implementation(project(":core"))
             implementation(project(":runtime-skiko"))
-            implementation(project(":core-dsl"))
+            // No core-dsl on purpose: this example builds scenes with the plain core API.
         }
     }
 }
