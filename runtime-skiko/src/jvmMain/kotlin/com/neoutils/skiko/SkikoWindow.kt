@@ -3,6 +3,7 @@ package com.neoutils.skiko
 import com.neoutils.core.input.KeyEvent
 import com.neoutils.core.scene.SceneManager
 import com.neoutils.dsl.ScenesBuilder
+import com.neoutils.dsl.game
 import org.jetbrains.skiko.SkiaLayer
 import org.jetbrains.skiko.SkiaLayerRenderDelegate
 import java.awt.Dimension
@@ -53,8 +54,13 @@ class SkikoWindow(
 fun runSkikoWindow(
     title: String = "kmp-engine",
     size: WindowSize = WindowSize(),
-    block: ScenesBuilder.() -> Unit,
+    manager: SceneManager,
 ) {
-    val factories = ScenesBuilder().apply(block).factories
-    SkikoWindow(title, size).run(SceneManager(factories))
+    SkikoWindow(title, size).run(manager)
 }
+
+fun runSkikoWindow(
+    title: String = "kmp-engine",
+    size: WindowSize = WindowSize(),
+    block: ScenesBuilder.() -> Unit,
+) = runSkikoWindow(title, size, game(block))

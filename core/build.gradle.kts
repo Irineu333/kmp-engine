@@ -1,6 +1,7 @@
-@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalWasmDsl::class)
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -14,6 +15,12 @@ kotlin {
     }
 
     jvm()
+
+    // Pure logic, no DOM: run wasm tests on Node so `./gradlew build` stays headless.
+    // The produced klib is env-agnostic; browser-facing modules declare browser() themselves.
+    wasmJs {
+        nodejs()
+    }
 
     sourceSets {
         commonTest.dependencies {

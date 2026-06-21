@@ -6,7 +6,6 @@ import com.neoutils.core.scene.SceneManager
 import com.neoutils.core.time.FrameClock
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skiko.SkikoRenderDelegate
-import java.util.concurrent.ConcurrentLinkedQueue
 
 class SceneRenderDelegate(
     private val manager: SceneManager,
@@ -18,7 +17,7 @@ class SceneRenderDelegate(
 
     private val clock = FrameClock()
 
-    private val inputEvents = ConcurrentLinkedQueue<InputEvent>()
+    private val inputEvents = InputQueue()
 
     fun enqueue(event: InputEvent) {
         inputEvents.add(event)

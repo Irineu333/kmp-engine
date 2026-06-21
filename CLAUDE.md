@@ -2,7 +2,8 @@
 
 2D game engine in Kotlin Multiplatform. Educational study project, Godot-inspired
 (scene graph of nodes). The core is backend-agnostic and draws against an abstract
-`Renderer`; Skiko is the default runtime. JVM-only for now.
+`Renderer`; Skiko is the default runtime. Targets JVM (desktop) and wasmJs (browser);
+the `pong` example runs on both.
 
 User-facing docs: see `README.md`.
 
@@ -15,10 +16,13 @@ Requires JDK 21 (Kotlin/Gradle via wrapper).
 ./gradlew :example:bouncing-ball:run    # run the physics + delta-time example
 ./gradlew :example:colliding-balls:run  # run the ball-to-ball elastic collision example
 ./gradlew :example:keyboard-input:run   # run the keyboard input example
-./gradlew :example:pong:run             # run the two-player Pong example
+./gradlew :example:pong:run             # run the two-player Pong example (desktop/JVM)
+./gradlew :example:pong:wasmJsBrowserDevelopmentRun  # run Pong in the browser (wasmJs)
 ./gradlew build                         # compile all modules + run tests (check)
 ./gradlew :core:jvmTest                 # run a module's tests (no root `test` task — KMP)
 ```
+
+Only `pong` targets the browser so far; the other examples are JVM-only.
 
 ## Modules & dependency direction
 
@@ -29,21 +33,26 @@ example/*  ─→  runtime-skiko ─→ core-dsl ─→ core
 
 | Module | Role |
 |---|---|
-| `core` | Nodes, scene tree, `SceneManager` (named scenes + runtime switching), abstract `Renderer`, frame clock, value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`. |
-| `core-dsl` | Scene-building DSL (`scene("name") { add<...> { } }` via `ScenesBuilder`). Uses `kotlin-reflect`. |
-| `runtime-skiko` | `Renderer` + desktop window (`SkikoWindow`) implementation via Skiko (Skia + Swing). Depends on `core-dsl` to expose the `runSkikoWindow { scene(...) { } }` scene-builder. `jvmMain`. |
-| `example/hello-world`, `example/bouncing-ball`, `example/colliding-balls`, `example/keyboard-input`, `example/pong` | Sample apps. |
+| `core` | Nodes, scene tree, `SceneManager` (named scenes + runtime switching), abstract `Renderer`, frame clock, value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`; targets `jvm` + `wasmJs`. |
+| `core-dsl` | Scene-building DSL via `ScenesBuilder`. `commonMain` exposes a reflection-free builder (`add(::Node) { }`); `jvmMain` adds the reflection-based `add<Node>()` overload (`kotlin-reflect`, JVM-only). |
+| `runtime-skiko` | `Renderer` + window implementation via Skiko. Shared Skia drawing (`SkikoRenderer`, `SceneRenderDelegate`) lives in `commonMain`; the window/keyboard layer is per-target: `jvmMain` (Swing/AWT `SkikoWindow`), `wasmJsMain` (`SkikoCanvas`: a `SkiaLayer` on an HTML `<canvas>` + DOM key events). Exposes `runSkikoWindow { scene(...) { } }` (JVM) / `runSkikoCanvas { scene(...) { } }` (wasm). |
+| `example/hello-world`, `example/bouncing-ball`, `example/colliding-balls`, `example/keyboard-input` | JVM-only sample apps. |
+| `example/pong` | Sample app on both `jvm` and `wasmJs`; nodes + scenes in `commonMain`, platform `Main.kt` per target. |
 
 ## Architecture invariants
 
 - **`core` is backend-agnostic.** It never imports Skiko/Swing/AWT — it only draws
   through the `Renderer` interface. `runtime-skiko` is the only module with a backend.
-- **`core` logic stays in `commonMain`** (no JVM-only APIs), keeping the multiplatform
-  path open even though only the JVM target runs today.
+- **`core`/`core-dsl` logic stays in `commonMain`** (no JVM-only APIs). `core-dsl`
+  keeps `kotlin-reflect` confined to `jvmMain` (it's unavailable on wasmJs); common
+  code uses the factory-based `add(::Node)` overload.
+- **Windowing/input is per-target in `runtime-skiko`,** never in `core`. The shared
+  Skia drawing is in `commonMain`; the JVM uses Swing/AWT and wasmJs uses an HTML
+  `<canvas>` + DOM events. Cross-thread input uses the `InputQueue` expect/actual
+  (`ConcurrentLinkedQueue` on JVM, `ArrayDeque` on the single-threaded browser).
 - **Dependency direction is one-way:** `example → runtime-skiko → core-dsl → core`
   (examples also depend on `core-dsl` directly). `core` knows nothing about the DSL
-  or any runtime. The desktop window lives in `runtime-skiko` (`SkikoWindow`), never
-  in `core` — windowing is a desktop-only concern, keeping the path open for Android.
+  or any runtime.
 
 ## Conventions
 
@@ -53,6 +62,13 @@ example/*  ─→  runtime-skiko ─→ core-dsl ─→ core
   when adding source sets that rely on `field =` backing properties.
 - Skiko resolves a per-OS/arch native artifact at configuration time
   (`runtime-skiko/build.gradle.kts`) — don't hardcode the platform suffix.
+- The wasmJs Skiko klib doesn't bundle the Skia `.wasm` binary: the `pong` build
+  unpacks `skiko-js-wasm-runtime` into the wasm resources (`unpackSkikoWasmRuntime`
+  task) so the browser can load it. The `<canvas>` id in `index.html` (`SkikoTarget`)
+  must match the `runSkikoCanvas(canvasElementId = ...)` call, and the webpack
+  `outputFileName` (`pong.js`) must match the `<script src>`.
+- DSL: JVM scenes can use `add<Node>()` (reflection); cross-platform/wasm scenes use
+  `add(::Node) { }`. The `pong` scenes use the factory form so they compile everywhere.
 
 ## Node lifecycle
 
