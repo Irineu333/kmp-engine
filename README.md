@@ -1,61 +1,68 @@
-# KMP Engine
+# KMP 2D Engine
 
-Game engine 2D minimalista em Kotlin Multiplatform. Projeto de estudo.
+Uma 2D game engine minimalista, backend-agnostic, em Kotlin Multiplatform, para fins de estudo, inspirada no **Godot** (scene graph de nós), mas com arquitetura flexível e aberta a outros padrões.
 
-Inspirada no **Godot** (scene graph de nós), mas com arquitetura flexível, aberta a outros padrões.
-O núcleo é **backend-agnostic**: desenha contra um `Renderer` abstrato — com Skiko como implementação padrão.
+## Plataformas
 
-> Status: WIP / educacional. Roda em **JVM** (desktop) e **wasmJs** (navegador) —
-> o exemplo `pong` roda nos dois.
+O núcleo (`core`, `core-dsl`, `core-debug`) e o `runtime-skiko` compilam para JVM e
+wasmJs. Cada plataforma tem sua camada de janela/input:
+
+| Plataforma | Alvo Kotlin | Janela / Input | Exemplos |
+|---|---|---|---|
+| Desktop | `jvm` | Swing/AWT (`SkikoWindow`) | ✅ todos |
+| Navegador | `wasmJs` | `<canvas>` HTML + eventos DOM (`SkikoCanvas`) | ✅ `pong` |
+
+> Só o `pong` está conectado ao navegador por enquanto; os demais exemplos são JVM-only.
 
 ## Conceitos
 
-- **Scene graph** — `Node` / `Node2D` em árvore.
-- **Delta time** — `FrameClock` para movimento independente de FPS.
-- **Renderer abstrato** — backend trocável (Skiko padrão).
-- **DSL** — monta cenas nomeadas com `runSkikoWindow { scene(...) { add(::Node) { } } }` (a primeira cena registrada é a inicial). No JVM também há o atalho `add<Node>()` (via reflexão); para código multiplataforma/web use a forma com factory `add(::Node)`.
-- **Multi-cena** — registre várias cenas e troque em runtime com `tree.changeScene("nome")`.
-- **Debug plugável** — módulo `core-debug` opcional e desacoplado do `core`. `debug { }`
-  injeta um `DebugLayer` na cena com FPS (F1) e bounds (F2); cada feature liga/desliga
-  por atalho. Jogos adicionam as próprias features (subclasses de `DebugFeature`).
+- **Scene graph** — a cena é uma árvore de nós (`Node` / `Node2D`) percorrida a cada frame.
+- **Delta time** — a simulação avança pelo tempo entre frames, não pelo FPS.
+- **Backend-agnostic** — o `core` desenha contra um `Renderer` abstrato, com backend trocável (Skiko padrão).
+- **DSL** — descreve a árvore da cena de forma declarativa, separando o conteúdo da mecânica de montagem.
+- **Multi-cena** — cenas nomeadas, reconstruídas a cada troca, alternadas em runtime.
+- **Debug plugável** — inspeção opcional (FPS, bounds) num módulo isolado, invisível ao `core`.
 
 ## Exemplo
 
+Uma cena com um `Label` embutido e o overlay de debug habilitado.
+
 ```kotlin
-fun main() = runSkikoWindow(title = "bouncing-ball") {
+fun main() = runSkikoWindow(title = "hello-world") {
     scene("main") {
-        add<Ball> {
-            radius = 32f
-            color = Color.RED
+        add(::Label) {
+            text = "Hello, World!"
         }
-        debug {                       // FPS (F1) + bounds (F2)...
-            add(::VelocityOverlay)    // ...mais uma feature do jogo (F3)
-        }
+        debug() // overlay de debug (FPS, bounds) — opt-in
     }
 }
 ```
 
-Várias cenas e troca em runtime (a primeira cena é a inicial; ex.: menu → jogo):
+> `add(::Label)` compila em qualquer alvo; no JVM há ainda `add<Label> { }` por reflexão.
 
-```kotlin
-fun main() = runSkikoWindow(title = "pong") {
-    scene("menu") { add<MenuController>() /* ENTER → changeScene("pong") */ }
-    scene("pong") { add<ReturnToMenu>()   /* ESC   → changeScene("menu") */ }
-}
-```
+Os demais exemplos exercitam funcionalidades específicas da engine:
+
+| Exemplo | Funcionalidade |
+|---|---|
+| `hello-world` | cena mínima, `Label`, posicionamento |
+| `bouncing-ball` | física + delta time, debug com feature própria |
+| `colliding-balls` | colisão elástica, montagem da cena com a API pura do `core` (sem DSL) |
+| `keyboard-input` | input de teclado (`onInput`) |
+| `pong` | jogo completo (2 jogadores): menu, troca de cena, JVM + navegador |
 
 ## Requisitos
 
-JDK 21. Kotlin e Gradle via wrapper.
+- **JDK 21**
+- **IntelliJ IDEA** (recomendada — o projeto é Gradle/Kotlin Multiplatform)
 
 ## Como rodar
 
 ```bash
-./gradlew :example:hello-world:run
-./gradlew :example:bouncing-ball:run
-./gradlew :example:colliding-balls:run
-./gradlew :example:keyboard-input:run
-./gradlew :example:pong:run                          # desktop (JVM)
+./gradlew :example:hello-world:runJvm
+./gradlew :example:bouncing-ball:runJvm
+./gradlew :example:colliding-balls:runJvm
+./gradlew :example:keyboard-input:runJvm
+./gradlew :example:pong:runJvm                       # desktop (JVM)
 ./gradlew :example:pong:wasmJsBrowserDevelopmentRun  # navegador (wasmJs)
 ```
 
@@ -63,12 +70,8 @@ JDK 21. Kotlin e Gradle via wrapper.
 
 | Módulo | Papel |
 |---|---|
-| `core` | Nodes, scene tree, `Renderer` abstrato, frame clock, tipos (`Vec2`, `Color`, `Rect`, `Size`). |
-| `core-dsl` | DSL para construir cenas (forma com factory no `commonMain`; atalho com reflexão só no JVM). |
-| `runtime-skiko` | Implementação do `Renderer` com Skiko. Desenho compartilhado no `commonMain`; janela/input por alvo: Swing/AWT (`SkikoWindow`, JVM) e `<canvas>` HTML + eventos DOM (`SkikoCanvas`, wasmJs). |
-| `example/hello-world` | Exemplo básico. |
-| `example/bouncing-ball` | Exemplo com física + delta time. |
-| `example/colliding-balls` | Colisão elástica entre bolas; monta a cena com a API pura do `core` (sem DSL). |
-| `example/keyboard-input` | Exemplo de input de teclado (`onInput`). |
-| `example/pong` | Pong de dois jogadores com menu inicial e troca de cena (`tree.changeScene`). Roda em JVM e no navegador (wasmJs). |
-```
+| `core` | O coração da engine: árvore de cena, ciclo de vida dos nós e tipos base. Não conhece backend nem plataforma. |
+| `core-dsl` | Camada de conveniência para montar cenas de forma declarativa, sobre a API do `core`. |
+| `core-debug` | Ferramentas de inspeção opcionais, sem acoplamento ao `core` — pode ser ignorado por completo. |
+| `runtime-skiko` | A ponte com o mundo real: implementa o renderer e a janela/input para cada plataforma. |
+| `example/*` | Jogos de demonstração que exercitam a engine (ver [Exemplo](#exemplo)). |
