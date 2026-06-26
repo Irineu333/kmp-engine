@@ -1,8 +1,8 @@
 package com.neoutils.dsl
 
+import com.neoutils.core.scene.Game
 import com.neoutils.core.scene.Node
 import com.neoutils.core.scene.SceneFactory
-import com.neoutils.core.scene.SceneManager
 import com.neoutils.core.scene.SceneTree
 
 fun <T : Node> node(
@@ -19,14 +19,16 @@ fun scene(
     block: Node.() -> Unit,
 ): SceneTree = SceneTree(root = Node().apply(block))
 
-class ScenesBuilder {
+class GameBuilder {
 
     val factories = linkedMapOf<String, SceneFactory>()
 
     fun scene(name: String, block: Node.() -> Unit) {
         factories[name] = SceneFactory { scene(block) }
     }
+
+    fun build(): Game = Game(factories)
 }
 
-fun game(block: ScenesBuilder.() -> Unit): SceneManager =
-    SceneManager(ScenesBuilder().apply(block).factories)
+fun game(block: GameBuilder.() -> Unit): Game =
+    GameBuilder().apply(block).build()

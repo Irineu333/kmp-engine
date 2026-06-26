@@ -34,7 +34,7 @@ example/*  ─→  core-debug ────→ core-dsl ─→ core
 
 | Module | Role |
 |---|---|
-| `core` | Nodes, scene tree, `SceneManager` (named scenes + runtime switching), abstract `Renderer`, frame clock, value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`; targets `jvm` + `wasmJs`. |
+| `core` | Nodes, scene tree, `Game` (the public scene-set IR) + `SceneManager` (runtime scene switching, built from a `Game`), abstract `Renderer`, frame clock, value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`; targets `jvm` + `wasmJs`. |
 | `core-dsl` | Scene-building DSL via `ScenesBuilder`. `commonMain` exposes a reflection-free builder (`add(::Node) { }`); `jvmMain` adds the reflection-based `add<Node>()` overload (`kotlin-reflect`, JVM-only). |
 | `core-debug` | Optional, backend-agnostic debug toolkit. `DebugFeature` (toggleable `Node` base with a keyboard `shortcut`), `DebugLayer` (container) and built-in `FpsFeature` (F1) / `BoundsFeature` (F2). The `Node.debug { }` builder injects a `DebugLayer` under a scene root; games drop their own `DebugFeature`s into the block. Pure `commonMain`; targets `jvm` + `wasmJs`. Engine code never references it — debug is fully opt-in. |
 | `runtime-skiko` | `Renderer` + window implementation via Skiko. Shared Skia drawing (`SkikoRenderer`, `SceneRenderDelegate`) lives in `commonMain`; the window/keyboard layer is per-target: `jvmMain` (Swing/AWT `SkikoWindow`), `wasmJsMain` (`SkikoCanvas`: a `SkiaLayer` on an HTML `<canvas>` + DOM key events). Exposes `runSkikoWindow { scene(...) { } }` (JVM) / `runSkikoCanvas { scene(...) { } }` (wasm). |
@@ -106,13 +106,16 @@ runSkikoWindow(title = "pong") {
 }
 ```
 
-`SceneManager` (in `core`) holds the named `SceneFactory` entries and the active
-`SceneTree` (`manager.current`); it starts on the first registered scene. A node
-switches scenes via `tree?.changeScene("name")` (delegates to `SceneManager.change`).
-Each `SceneFactory.create()` rebuilds its scene from scratch on every switch, so
-re-entering a scene starts it clean. The runtime snapshots `manager.current` at the
-start of each frame, so a `changeScene` during `onProcess`/`onInput` takes effect on
-the next frame.
+A `Game` (in `core`) is the immutable intermediate representation a game exposes — the
+named `SceneFactory` entries (e.g. `fun pong(): Game`). The runtime turns it into a
+`SceneManager`, the runtime state holding the active `SceneTree` (`manager.current`),
+starting on the first registered scene. `SceneManager` is built internally by the runtime
+(in `SceneRenderDelegate`), so games pass a `Game` to `runSkikoWindow`/`runSkikoCanvas`
+and never touch `SceneManager`. A node switches scenes via `tree?.changeScene("name")`
+(delegates to `SceneManager.change`). Each `SceneFactory.create()` rebuilds its scene from
+scratch on every switch, so re-entering a scene starts it clean. The runtime snapshots
+`manager.current` at the start of each frame, so a `changeScene` during
+`onProcess`/`onInput` takes effect on the next frame.
 
 ## Testing
 

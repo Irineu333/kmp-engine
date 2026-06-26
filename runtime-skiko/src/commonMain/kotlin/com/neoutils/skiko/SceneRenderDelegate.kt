@@ -2,14 +2,17 @@ package com.neoutils.skiko
 
 import com.neoutils.core.input.InputEvent
 import com.neoutils.core.math.Size
+import com.neoutils.core.scene.Game
 import com.neoutils.core.scene.SceneManager
 import com.neoutils.core.time.FrameClock
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skiko.SkikoRenderDelegate
 
 class SceneRenderDelegate(
-    private val manager: SceneManager,
+    game: Game,
 ) : SkikoRenderDelegate {
+
+    private val manager = SceneManager(game)
 
     private val renderer = SkikoRenderer()
 

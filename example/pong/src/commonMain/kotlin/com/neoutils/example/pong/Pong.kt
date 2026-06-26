@@ -1,5 +1,6 @@
 package com.neoutils.example.pong
 
+import com.neoutils.core.scene.Game
 import com.neoutils.debug.debug
 import com.neoutils.dsl.add
 import com.neoutils.dsl.game
@@ -8,7 +9,7 @@ import com.neoutils.example.pong.menu.Menu
 import com.neoutils.example.pong.menu.MenuHint
 import com.neoutils.example.pong.menu.MenuTitle
 
-fun pong() = game {
+fun pong(): Game = game {
     scene("menu") {
         add(::Background)
         add(::MenuTitle)

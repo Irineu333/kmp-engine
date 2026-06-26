@@ -22,7 +22,7 @@ class SceneManagerTest {
             "game" to SceneFactory { SceneTree(Node()) },
         )
 
-        val manager = SceneManager(ordered)
+        val manager = SceneManager(Game(ordered))
 
         assertSame(first, manager.current)
         assertSame(manager, manager.current.manager)
@@ -30,7 +30,7 @@ class SceneManagerTest {
 
     @Test
     fun change_swapsCurrentScene() {
-        val manager = SceneManager(factories)
+        val manager = SceneManager(Game(factories))
         val menu = manager.current
 
         manager.change("game")
@@ -41,7 +41,7 @@ class SceneManagerTest {
 
     @Test
     fun change_rebuildsSceneFromScratch() {
-        val manager = SceneManager(factories)
+        val manager = SceneManager(Game(factories))
 
         manager.change("game")
         val first = manager.current
@@ -53,7 +53,7 @@ class SceneManagerTest {
 
     @Test
     fun change_withArgs_propagatesPayloadToScene() {
-        val manager = SceneManager(factories)
+        val manager = SceneManager(Game(factories))
 
         manager.change("game", args = "payload")
 
@@ -62,7 +62,7 @@ class SceneManagerTest {
 
     @Test
     fun change_withoutArgs_leavesArgsNull() {
-        val manager = SceneManager(factories)
+        val manager = SceneManager(Game(factories))
 
         manager.change("game")
 
@@ -71,7 +71,7 @@ class SceneManagerTest {
 
     @Test
     fun changeScene_fromTree_forwardsArgsToManager() {
-        val manager = SceneManager(factories)
+        val manager = SceneManager(Game(factories))
 
         manager.current.changeScene("game", args = 42)
 
@@ -80,7 +80,7 @@ class SceneManagerTest {
 
     @Test
     fun change_toUnknownScene_fails() {
-        val manager = SceneManager(factories)
+        val manager = SceneManager(Game(factories))
 
         assertFailsWith<IllegalStateException> {
             manager.change("missing")

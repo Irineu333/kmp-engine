@@ -1,9 +1,9 @@
 package com.neoutils.core.scene
 
 class SceneManager(
-    private val factories: Map<String, SceneFactory>,
+    private val game: Game,
 ) {
-    var current: SceneTree = build(factories.keys.firstOrNull() ?: error("No scenes registered"))
+    var current: SceneTree = build(game.scenes.keys.first())
         private set
 
     fun change(name: String, args: Any? = null) {
@@ -11,16 +11,10 @@ class SceneManager(
     }
 
     private fun build(name: String, args: Any? = null): SceneTree {
-        val factory = factories[name] ?: error("Scene not found: $name")
+        val factory = game.scenes[name] ?: error("Scene not found: $name")
         return factory.create().also {
             it.manager = this
             it.args = args
-        }
-    }
-
-    companion object {
-        fun ofMain(tree: SceneTree): SceneManager {
-            return SceneManager(mapOf("main" to SceneFactory { tree }))
         }
     }
 }
