@@ -9,78 +9,99 @@ import kotlin.test.assertSame
 
 class SceneManagerTest {
 
-    private val factories: Map<String, SceneFactory> = linkedMapOf(
-        "menu" to SceneFactory { SceneTree(Node()) },
-        "game" to SceneFactory { SceneTree(Node()) },
+    private fun factories(): Map<String, SceneFactory> = linkedMapOf(
+        "menu" to SceneFactory { Node() },
+        "game" to SceneFactory { Node() },
     )
 
     @Test
-    fun startsOnFirstScene_withBackReference() {
-        val first = SceneTree(Node())
+    fun startsOnFirstScene_mountedUnderRoot() {
+        val menuRoot = Node()
         val ordered: Map<String, SceneFactory> = linkedMapOf(
-            "menu" to SceneFactory { first },
-            "game" to SceneFactory { SceneTree(Node()) },
+            "menu" to SceneFactory { menuRoot },
+            "game" to SceneFactory { Node() },
         )
+        val manager = SceneManager(Game(ordered))
+        val tree = SceneTree()
 
-        val manager = SceneManager(ordered)
+        manager.applyPending(tree)
 
-        assertSame(first, manager.current)
-        assertSame(manager, manager.current.manager)
+        assertSame(menuRoot, manager.currentScene)
+        assertSame(menuRoot, tree.root.children.single())
     }
 
     @Test
-    fun change_swapsCurrentScene() {
-        val manager = SceneManager(factories)
-        val menu = manager.current
+    fun change_isDeferred_untilApply() {
+        val manager = SceneManager(Game(factories()))
+        val tree = SceneTree()
+        manager.applyPending(tree)
+        val menu = manager.currentScene
 
         manager.change("game")
 
-        assertNotSame(menu, manager.current)
-        assertSame(manager, manager.current.manager)
+        assertSame(menu, manager.currentScene)
+    }
+
+    @Test
+    fun applyPending_swapsCurrentScene() {
+        val manager = SceneManager(Game(factories()))
+        val tree = SceneTree()
+        manager.applyPending(tree)
+        val menu = manager.currentScene
+
+        manager.change("game")
+        manager.applyPending(tree)
+
+        assertNotSame(menu, manager.currentScene)
+        assertSame(manager.currentScene, tree.root.children.single())
     }
 
     @Test
     fun change_rebuildsSceneFromScratch() {
-        val manager = SceneManager(factories)
+        val manager = SceneManager(Game(factories()))
+        val tree = SceneTree()
+        manager.applyPending(tree)
 
         manager.change("game")
-        val first = manager.current
+        manager.applyPending(tree)
+        val first = manager.currentScene
+
         manager.change("game")
-        val second = manager.current
+        manager.applyPending(tree)
+        val second = manager.currentScene
 
         assertNotSame(first, second)
     }
 
     @Test
-    fun change_withArgs_propagatesPayloadToScene() {
-        val manager = SceneManager(factories)
+    fun change_withArgs_propagatesPayload() {
+        val manager = SceneManager(Game(factories()))
+        val tree = SceneTree()
+        manager.applyPending(tree)
 
         manager.change("game", args = "payload")
+        manager.applyPending(tree)
 
-        assertEquals("payload", manager.current.args)
+        assertEquals("payload", manager.args)
     }
 
     @Test
-    fun change_withoutArgs_leavesArgsNull() {
-        val manager = SceneManager(factories)
+    fun change_withoutArgs_resetsArgsToNull() {
+        val manager = SceneManager(Game(factories()))
+        val tree = SceneTree()
+        manager.applyPending(tree)
+        manager.change("game", args = "payload")
+        manager.applyPending(tree)
 
-        manager.change("game")
+        manager.change("menu")
+        manager.applyPending(tree)
 
-        assertNull(manager.current.args)
+        assertNull(manager.args)
     }
 
     @Test
-    fun changeScene_fromTree_forwardsArgsToManager() {
-        val manager = SceneManager(factories)
-
-        manager.current.changeScene("game", args = 42)
-
-        assertEquals(42, manager.current.args)
-    }
-
-    @Test
-    fun change_toUnknownScene_fails() {
-        val manager = SceneManager(factories)
+    fun change_toUnknownScene_failsEagerly() {
+        val manager = SceneManager(Game(factories()))
 
         assertFailsWith<IllegalStateException> {
             manager.change("missing")

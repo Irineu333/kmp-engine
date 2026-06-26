@@ -27,7 +27,7 @@ class Menu : Node() {
     private var selected = 0
 
     override fun onProcess(delta: Float) {
-        val input = tree?.input ?: return
+        val input = engine?.input ?: return
         if (input.isJustPressed(Key.UP)) {
             selected = (selected - 1 + options.size) % options.size
         }
@@ -35,13 +35,13 @@ class Menu : Node() {
             selected = (selected + 1) % options.size
         }
         if (input.isJustPressed(Key.ENTER)) {
-            tree?.changeScene("pong", options[selected].mode)
+            engine?.changeScene("pong", options[selected].mode)
         }
     }
 
     override fun onDraw(renderer: Renderer) {
-        val viewport = tree?.size ?: return
-        val measurer = tree?.textMeasurer ?: return
+        val viewport = engine?.size ?: return
+        val measurer = engine?.textMeasurer ?: return
 
         val optionHeight = measurer.measure(options[0].label, OPTION_SIZE).height
         val blockHeight = (options.size - 1) * LINE_HEIGHT + optionHeight

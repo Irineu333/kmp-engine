@@ -11,7 +11,7 @@ class Background : Node() {
     var color: Color = Color(0.10f, 0.11f, 0.13f)
 
     override fun onDraw(renderer: Renderer) {
-        val viewport = tree?.size ?: return
+        val viewport = engine?.size ?: return
         renderer.drawRect(Rect(Vec2.ZERO, viewport), color, fill = true)
     }
 }

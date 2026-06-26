@@ -1,15 +1,18 @@
 package com.neoutils.skiko
 
 import com.neoutils.core.input.InputEvent
+import com.neoutils.core.input.InputQueue
 
-actual class InputQueue {
+private class WasmInputQueue : InputQueue {
 
     // The browser is single-threaded: DOM events and rendering share one thread.
     private val queue = ArrayDeque<InputEvent>()
 
-    actual fun add(event: InputEvent) {
+    override fun add(event: InputEvent) {
         queue.addLast(event)
     }
 
-    actual fun poll(): InputEvent? = queue.removeFirstOrNull()
+    override fun poll(): InputEvent? = queue.removeFirstOrNull()
 }
+
+actual fun createInputQueue(): InputQueue = WasmInputQueue()

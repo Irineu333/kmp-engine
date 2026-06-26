@@ -18,7 +18,7 @@ class Ball : Node2D() {
     val mass: Float get() = radius * radius
 
     override fun onReady() {
-        val viewport = tree?.size ?: return
+        val viewport = engine?.size ?: return
 
         color = Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())
         position = Vec2.random() * Vec2(viewport.width - 2 * radius, viewport.height - 2 * radius) + Vec2(radius, radius)
@@ -26,7 +26,7 @@ class Ball : Node2D() {
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = engine?.size ?: return
 
         position += velocity * delta
         bounceOffWalls(viewport)

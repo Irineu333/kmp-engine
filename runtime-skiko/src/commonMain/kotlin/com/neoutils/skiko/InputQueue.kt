@@ -1,8 +1,6 @@
 package com.neoutils.skiko
 
-import com.neoutils.core.input.InputEvent
+import com.neoutils.core.input.InputQueue
 
-expect class InputQueue() {
-    fun add(event: InputEvent)
-    fun poll(): InputEvent?
-}
+/** Platform-specific [InputQueue] used to bridge host input events into the engine. */
+expect fun createInputQueue(): InputQueue

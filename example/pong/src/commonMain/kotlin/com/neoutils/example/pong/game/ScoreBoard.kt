@@ -14,7 +14,7 @@ class ScoreBoard : Label() {
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = engine?.size ?: return
         val size = getSize()
 
         val centerX = if (side == Side.LEFT) viewport.width / 4f else viewport.width * 3f / 4f

@@ -16,7 +16,7 @@ abstract class DebugFeature(
 
     final override fun onProcess(delta: Float) {
         shortcut?.let { key ->
-            if (tree?.input?.isJustPressed(key) == true) enabled = !enabled
+            if (engine?.input?.isJustPressed(key) == true) enabled = !enabled
         }
         if (enabled) process(delta)
     }

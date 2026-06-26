@@ -2,8 +2,8 @@ package com.neoutils.skiko
 
 import com.neoutils.core.input.Key
 import com.neoutils.core.input.KeyEvent
-import com.neoutils.core.scene.SceneManager
-import com.neoutils.dsl.ScenesBuilder
+import com.neoutils.core.scene.Game
+import com.neoutils.dsl.GameBuilder
 import com.neoutils.dsl.game
 import kotlinx.browser.document
 import kotlinx.coroutines.MainScope
@@ -25,7 +25,7 @@ class SkikoCanvas(
     private val canvasElementId: String = "canvas",
 ) {
 
-    fun run(manager: SceneManager) {
+    fun run(game: Game) {
         // Wait for the Skia wasm runtime to load before touching any Skia API.
         onWasmReady {
             // The font fetch is async; a coroutine lets the bootstrap read top-to-bottom
@@ -38,7 +38,7 @@ class SkikoCanvas(
                 // frame — otherwise drawText() would have no glyphs and text vanishes.
                 installTypeface(loadDefaultFont())
 
-                val delegate = SceneRenderDelegate(manager)
+                val delegate = SceneRenderDelegate(engineOf(game))
                 val skiaLayer = SkiaLayer()
 
                 // SkiaLayer renders on demand; re-request a frame after each one so the
@@ -69,12 +69,12 @@ class SkikoCanvas(
 
 fun runSkikoCanvas(
     canvasElementId: String = "canvas",
-    manager: SceneManager,
+    game: Game,
 ) {
-    SkikoCanvas(canvasElementId).run(manager)
+    SkikoCanvas(canvasElementId).run(game)
 }
 
 fun runSkikoCanvas(
     canvasElementId: String = "canvas",
-    block: ScenesBuilder.() -> Unit,
+    block: GameBuilder.() -> Unit,
 ) = runSkikoCanvas(canvasElementId, game(block))

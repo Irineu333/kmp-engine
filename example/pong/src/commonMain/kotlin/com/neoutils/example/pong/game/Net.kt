@@ -10,7 +10,7 @@ class Net : Node() {
     var color: Color = Color.GRAY
 
     override fun onDraw(renderer: Renderer) {
-        val viewport = tree?.size ?: return
+        val viewport = engine?.size ?: return
         val x = viewport.width / 2f
 
         var y = 0f

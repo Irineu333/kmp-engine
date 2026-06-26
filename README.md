@@ -70,7 +70,7 @@ Os demais exemplos exercitam funcionalidades específicas da engine:
 
 | Módulo | Papel |
 |---|---|
-| `core` | O coração da engine: árvore de cena, ciclo de vida dos nós e tipos base. Não conhece backend nem plataforma. |
+| `core` | O coração da engine: o `Engine` (orquestrador do loop), uma `SceneTree` única e persistente, o `Game` (representação intermediária das cenas, agnóstica de plataforma), ciclo de vida dos nós, troca de cena e tipos base. Não conhece backend nem plataforma. |
 | `core-dsl` | Camada de conveniência para montar cenas de forma declarativa, sobre a API do `core`. |
 | `core-debug` | Ferramentas de inspeção opcionais, sem acoplamento ao `core` — pode ser ignorado por completo. |
 | `runtime-skiko` | A ponte com o mundo real: implementa o renderer e a janela/input para cada plataforma. |

@@ -5,7 +5,7 @@ import com.neoutils.core.scene.Node
 class BallCollider : Node() {
 
     override fun onProcess(delta: Float) {
-        val balls = collect(tree?.root ?: return)
+        val balls = collect(engine?.root ?: return)
 
         for (i in balls.indices) {
             for (j in i + 1 until balls.size) {

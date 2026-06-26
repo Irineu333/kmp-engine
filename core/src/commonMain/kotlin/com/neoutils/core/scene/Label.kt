@@ -13,7 +13,7 @@ open class Label : Node2D() {
     var color: Color = Color.BLUE
 
     fun getSize(): Size {
-        return tree?.textMeasurer?.measure(text, fontSize) ?: Size.ZERO
+        return engine?.textMeasurer?.measure(text, fontSize) ?: Size.ZERO
     }
 
     override fun bounds(): Rect = Rect(Vec2.ZERO, getSize())

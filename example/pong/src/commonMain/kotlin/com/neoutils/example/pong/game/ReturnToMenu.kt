@@ -9,7 +9,7 @@ class ReturnToMenu : Node() {
 
     override fun onInput(event: InputEvent) {
         if (event is KeyEvent && event.pressed && event.key == Key.ESCAPE) {
-            tree?.changeScene("menu")
+            engine?.changeScene("menu")
         }
     }
 }

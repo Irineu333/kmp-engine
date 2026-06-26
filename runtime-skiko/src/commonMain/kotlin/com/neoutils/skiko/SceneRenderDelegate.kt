@@ -1,14 +1,14 @@
 package com.neoutils.skiko
 
+import com.neoutils.core.Engine
 import com.neoutils.core.input.InputEvent
 import com.neoutils.core.math.Size
-import com.neoutils.core.scene.SceneManager
 import com.neoutils.core.time.FrameClock
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skiko.SkikoRenderDelegate
 
 class SceneRenderDelegate(
-    private val manager: SceneManager,
+    private val engine: Engine,
 ) : SkikoRenderDelegate {
 
     private val renderer = SkikoRenderer()
@@ -17,10 +17,8 @@ class SceneRenderDelegate(
 
     private val clock = FrameClock()
 
-    private val inputEvents = InputQueue()
-
     fun enqueue(event: InputEvent) {
-        inputEvents.add(event)
+        engine.enqueue(event)
     }
 
     override fun onRender(
@@ -29,29 +27,16 @@ class SceneRenderDelegate(
         height: Int,
         nanoTime: Long
     ) {
-        // Snapshot the active scene for the whole frame: a changeScene() during
-        // process only swaps manager.current; the new scene enters next frame.
-        val scene = manager.current
-
         val delta = clock.tick(nanoTime)
 
         canvas.clear(org.jetbrains.skia.Color.WHITE)
 
         renderer.canvas = canvas
 
-        scene.size = Size(width.toFloat(), height.toFloat())
-        scene.textMeasurer = textMeasurer
+        // Feed the host's per-frame render context to the engine, then run the frame.
+        engine.viewport.size = Size(width.toFloat(), height.toFloat())
+        engine.viewport.textMeasurer = textMeasurer
 
-        scene.ready()
-
-        scene.input.clearJustPressed()
-        while (true) {
-            val event = inputEvents.poll() ?: break
-            scene.dispatchInput(event)
-        }
-
-        scene.process(delta)
-
-        scene.render(renderer)
+        engine.update(delta, renderer)
     }
 }

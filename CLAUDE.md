@@ -34,10 +34,10 @@ example/*  ─→  core-debug ────→ core-dsl ─→ core
 
 | Module | Role |
 |---|---|
-| `core` | Nodes, scene tree, `SceneManager` (named scenes + runtime switching), abstract `Renderer`, frame clock, value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`; targets `jvm` + `wasmJs`. |
+| `core` | Nodes, the single persistent `SceneTree`, `Engine` (frame-loop orchestrator), `Game` (the platform-agnostic scene-catalog IR handed to a runtime), `SceneManager` (internal: runtime scene switching), `Viewport` (render context), `InputState`/`InputQueue`, abstract `Renderer`, frame clock, value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`; targets `jvm` + `wasmJs`. |
 | `core-dsl` | Scene-building DSL via `ScenesBuilder`. `commonMain` exposes a reflection-free builder (`add(::Node) { }`); `jvmMain` adds the reflection-based `add<Node>()` overload (`kotlin-reflect`, JVM-only). |
 | `core-debug` | Optional, backend-agnostic debug toolkit. `DebugFeature` (toggleable `Node` base with a keyboard `shortcut`), `DebugLayer` (container) and built-in `FpsFeature` (F1) / `BoundsFeature` (F2). The `Node.debug { }` builder injects a `DebugLayer` under a scene root; games drop their own `DebugFeature`s into the block. Pure `commonMain`; targets `jvm` + `wasmJs`. Engine code never references it — debug is fully opt-in. |
-| `runtime-skiko` | `Renderer` + window implementation via Skiko. Shared Skia drawing (`SkikoRenderer`, `SceneRenderDelegate`) lives in `commonMain`; the window/keyboard layer is per-target: `jvmMain` (Swing/AWT `SkikoWindow`), `wasmJsMain` (`SkikoCanvas`: a `SkiaLayer` on an HTML `<canvas>` + DOM key events). Exposes `runSkikoWindow { scene(...) { } }` (JVM) / `runSkikoCanvas { scene(...) { } }` (wasm). |
+| `runtime-skiko` | `Renderer` + window implementation via Skiko. Shared Skia drawing (`SkikoRenderer`, `SceneRenderDelegate`) and the `Engine` assembly (`engineOf`) live in `commonMain`; the window/keyboard layer is per-target: `jvmMain` (Swing/AWT `SkikoWindow`), `wasmJsMain` (`SkikoCanvas`: a `SkiaLayer` on an HTML `<canvas>` + DOM key events). The per-target `createInputQueue()` supplies the platform `InputQueue`. Exposes `runSkikoWindow { scene(...) { } }` (JVM) / `runSkikoCanvas { scene(...) { } }` (wasm). |
 | `example/hello-world`, `example/bouncing-ball`, `example/colliding-balls`, `example/keyboard-input` | JVM-only sample apps. |
 | `example/pong` | Sample app on both `jvm` and `wasmJs`; nodes + scenes in `commonMain`, platform `Main.kt` per target. |
 
@@ -48,17 +48,23 @@ example/*  ─→  core-debug ────→ core-dsl ─→ core
 - **`core`/`core-dsl` logic stays in `commonMain`** (no JVM-only APIs). `core-dsl`
   keeps `kotlin-reflect` confined to `jvmMain` (it's unavailable on wasmJs); common
   code uses the factory-based `add(::Node)` overload.
+- **The `Engine` orchestrates injected capabilities.** It owns the frame loop and wires
+  the `SceneTree` (node graph), `SceneManager` (active scene), `InputState`, `Viewport`
+  and `InputQueue` together — each collaborator is single-purpose and unaware of the
+  others. Nodes reach these via the `Engine` injected into them during `SceneTree.ready`
+  (`node.engine`); `core` is the only place that knows everyone.
 - **Windowing/input is per-target in `runtime-skiko`,** never in `core`. The shared
   Skia drawing is in `commonMain`; the JVM uses Swing/AWT and wasmJs uses an HTML
-  `<canvas>` + DOM events. Cross-thread input uses the `InputQueue` expect/actual
-  (`ConcurrentLinkedQueue` on JVM, `ArrayDeque` on the single-threaded browser).
+  `<canvas>` + DOM events. `InputQueue` is an interface in `core`; the per-target
+  `createInputQueue()` supplies the impl (`ConcurrentLinkedQueue` on JVM, `ArrayDeque`
+  on the single-threaded browser).
 - **Dependency direction is one-way:** `example → runtime-skiko → core-dsl → core`
   (examples also depend on `core-dsl` directly). `core` knows nothing about the DSL
   or any runtime.
 - **Debug is decoupled and opt-in.** It lives in its own `core-debug` module; `core`/
   `SceneTree` have no debug concept. `DebugFeature`/`DebugLayer` are plain `Node`s,
   so the regular tree walk drives them — features self-toggle by reading
-  `tree.input` and gate their own `draw`/`process`. Generic overlays (FPS, bounds)
+  `engine.input` and gate their own `draw`/`process`. Generic overlays (FPS, bounds)
   ship in `core-debug`; game-specific ones (e.g. a velocity arrow tied to a game's `Ball`)
   stay in the example and just subclass `DebugFeature`.
 
@@ -82,17 +88,21 @@ example/*  ─→  core-debug ────→ core-dsl ─→ core
 
 Nodes extend `Node` (or `Node2D`) and override:
 
-- `onReady()` — once, after the node is attached to the `SceneTree` (`tree` is set).
+- `onReady()` — once, after the node is attached to the tree (the `Engine` is injected
+  into `node.engine`).
 - `onProcess(delta: Float)` — per frame; `delta` is seconds since last frame
   (use it for frame-rate-independent movement).
-- `onInput(event: InputEvent)` — per input event (e.g. `KeyEvent`). The runtime
-  captures backend events, enqueues them, and `SceneTree.dispatchInput(event)`
-  propagates each one through the tree at the start of a frame, before `onProcess`.
-  For continuous input, poll the derived state instead: `tree.input.isPressed(key)` /
-  `tree.input.isJustPressed(key)` (read inside `onProcess`).
+- `onInput(event: InputEvent)` — per input event (e.g. `KeyEvent`). The `Engine` drains
+  the `InputQueue` and `SceneTree.dispatchInput(event)` propagates each one through the
+  tree at the start of a frame, before `onProcess`. For continuous input, poll the
+  derived state instead: `engine.input.isPressed(key)` / `engine.input.isJustPressed(key)`
+  (read inside `onProcess`).
 - `onDraw(renderer: Renderer)` — per frame; draw via the `Renderer`.
 
-`SceneTree` walks the tree depth-first for each phase.
+Nodes reach engine capabilities through `node.engine` (e.g. `engine.size`, `engine.input`,
+`engine.args`, `engine.changeScene(...)`, `engine.root`). `SceneTree` walks the tree
+depth-first for each phase; `Engine.update` runs them in order each frame:
+`applyPending → ready → input → process → render`.
 
 ## Scenes & scene switching
 
@@ -106,13 +116,23 @@ runSkikoWindow(title = "pong") {
 }
 ```
 
-`SceneManager` (in `core`) holds the named `SceneFactory` entries and the active
-`SceneTree` (`manager.current`); it starts on the first registered scene. A node
-switches scenes via `tree?.changeScene("name")` (delegates to `SceneManager.change`).
-Each `SceneFactory.create()` rebuilds its scene from scratch on every switch, so
-re-entering a scene starts it clean. The runtime snapshots `manager.current` at the
-start of each frame, so a `changeScene` during `onProcess`/`onInput` takes effect on
-the next frame.
+A game definition is a platform-agnostic **`Game`** — the scene-catalog IR handed to a
+runtime. `game { scene(...) }` (DSL) returns a `Game`; a no-DSL app builds one with
+`Game.ofMain(root)`. The runtime entry points take a `Game` (`runSkikoWindow(game = pong())`),
+and `engineOf(game)` assembles the `Engine` from it plus the platform capabilities — so
+`SceneManager` stays an internal runtime detail, never the public hand-off type. A
+`commonMain` `fun pong(): Game` is thus reusable verbatim across the JVM and wasm targets.
+
+There is **one persistent `SceneTree`** (Godot-like): it owns a permanent `root`, and the
+active scene is mounted under it as a single child. `SceneManager` (in `core`, built from a
+`Game`) holds the named `SceneFactory` entries (each `create()` returns the scene's root
+`Node`) and tracks `currentScene`/`args`; it starts on the first registered scene. A node switches
+scenes via `engine?.changeScene("name")` (delegates to `SceneManager.change`). The switch
+is **deferred**: `change` only records the request, and `SceneManager.applyPending` mounts
+the new scene at the start of the next frame (in `Engine.update`), so a `changeScene`
+during `onProcess`/`onInput` takes effect on the following frame. Each `SceneFactory.create()`
+rebuilds its scene from scratch on every switch, so re-entering a scene starts it clean;
+`input`/`viewport` persist across switches (they live on the `Engine`, not the scene).
 
 ## Testing
 

@@ -1,42 +1,30 @@
 package com.neoutils.core.scene
 
+import com.neoutils.core.Engine
 import com.neoutils.core.graphics.Renderer
-import com.neoutils.core.graphics.TextMeasurer
 import com.neoutils.core.input.InputEvent
-import com.neoutils.core.input.InputState
-import com.neoutils.core.input.KeyEvent
-import com.neoutils.core.math.Size
 
-class SceneTree(
-    val root: Node,
-) {
+/**
+ * The single, persistent node graph. It owns a permanent [root]; the active scene is
+ * mounted under it (by [SceneManager]) and swapped on scene changes. The tree only
+ * walks the graph for each lifecycle phase — input/viewport/scene state live in the
+ * [Engine] and its injected collaborators.
+ */
+class SceneTree {
 
-    var size: Size = Size.ZERO
+    val root: Node = Node()
 
-    var textMeasurer: TextMeasurer? = null
-
-    var manager: SceneManager? = null
-
-    /** Payload passed to this scene via [changeScene]; null for the initial scene. */
-    var args: Any? = null
-
-    val input: InputState = InputState()
-
-    fun changeScene(name: String, args: Any? = null) {
-        manager?.change(name, args)
+    fun ready(engine: Engine) {
+        ready(root, engine)
     }
 
-    fun ready() {
-        ready(root)
-    }
-
-    private fun ready(node: Node) {
-        if (node.tree == null) {
-            node.tree = this
+    private fun ready(node: Node, engine: Engine) {
+        if (node.engine == null) {
+            node.engine = engine
             node.onReady()
         }
         node.children.forEach {
-            ready(it)
+            ready(it, engine)
         }
     }
 
@@ -52,7 +40,6 @@ class SceneTree(
     }
 
     fun dispatchInput(event: InputEvent) {
-        if (event is KeyEvent) input.update(event)
         dispatchInput(root, event)
     }
 

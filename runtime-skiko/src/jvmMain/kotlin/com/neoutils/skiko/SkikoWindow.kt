@@ -1,8 +1,8 @@
 package com.neoutils.skiko
 
 import com.neoutils.core.input.KeyEvent
-import com.neoutils.core.scene.SceneManager
-import com.neoutils.dsl.ScenesBuilder
+import com.neoutils.core.scene.Game
+import com.neoutils.dsl.GameBuilder
 import com.neoutils.dsl.game
 import org.jetbrains.skiko.SkiaLayer
 import org.jetbrains.skiko.SkiaLayerRenderDelegate
@@ -17,15 +17,15 @@ class SkikoWindow(
     private val config: WindowSize = WindowSize()
 ) {
 
-    fun run(manager: SceneManager) {
+    fun run(game: Game) {
 
         val skiaLayer = SkiaLayer()
 
-        val delegate = SceneRenderDelegate(manager)
+        val delegate = SceneRenderDelegate(engineOf(game))
 
         skiaLayer.renderDelegate = SkiaLayerRenderDelegate(skiaLayer, delegate)
-
         skiaLayer.isFocusable = true
+
         skiaLayer.addKeyListener(object : KeyAdapter() {
             override fun keyPressed(e: java.awt.event.KeyEvent) {
                 delegate.enqueue(KeyEvent(keyOf(e.keyCode), pressed = true))
@@ -54,13 +54,13 @@ class SkikoWindow(
 fun runSkikoWindow(
     title: String = "kmp-engine",
     size: WindowSize = WindowSize(),
-    manager: SceneManager,
+    game: Game,
 ) {
-    SkikoWindow(title, size).run(manager)
+    SkikoWindow(title, size).run(game)
 }
 
 fun runSkikoWindow(
     title: String = "kmp-engine",
     size: WindowSize = WindowSize(),
-    block: ScenesBuilder.() -> Unit,
+    block: GameBuilder.() -> Unit,
 ) = runSkikoWindow(title, size, game(block))

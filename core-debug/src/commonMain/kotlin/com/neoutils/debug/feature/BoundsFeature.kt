@@ -16,7 +16,7 @@ class BoundsFeature : DebugFeature(shortcut = Key.F2, enabled = false) {
     var color: Color = Color.RED
 
     override fun draw(renderer: Renderer) {
-        drawBounds(tree?.root ?: return, renderer)
+        drawBounds(engine?.root ?: return, renderer)
     }
 
     private fun drawBounds(node: Node, renderer: Renderer) {

@@ -19,7 +19,7 @@ class VelocityOverlay : DebugFeature(shortcut = Key.F3, enabled = false) {
     var headLength: Float = 12f
 
     override fun draw(renderer: Renderer) {
-        val root = tree?.root ?: return
+        val root = engine?.root ?: return
         drawVelocities(root, renderer)
     }
 

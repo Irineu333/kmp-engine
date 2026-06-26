@@ -15,7 +15,7 @@ class HumanController(
 ) : PaddleController {
 
     override fun direction(paddle: Paddle): Float {
-        val input = paddle.tree?.input ?: return 0f
+        val input = paddle.engine?.input ?: return 0f
         var direction = 0f
         if (input.isPressed(upKey)) direction -= 1f
         if (input.isPressed(downKey)) direction += 1f
@@ -35,7 +35,7 @@ class AIController(
     private var ball: Ball? = null
 
     override fun direction(paddle: Paddle): Float {
-        val ball = ball ?: findBall(paddle.tree?.root ?: return 0f)?.also { ball = it } ?: return 0f
+        val ball = ball ?: findBall(paddle.engine?.root ?: return 0f)?.also { ball = it } ?: return 0f
         val diff = ball.globalPosition().y - paddle.globalPosition().y
         if (abs(diff) <= deadZone) return 0f
         return (diff / responseDistance).coerceIn(-1f, 1f)

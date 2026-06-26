@@ -13,7 +13,7 @@ class KeyDisplay : Label() {
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = engine?.size ?: return
         val size = getSize()
 
         position = Vec2(

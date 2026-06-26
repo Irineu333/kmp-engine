@@ -18,13 +18,13 @@ class Ball : Node2D() {
         private set
 
     override fun onReady() {
-        val viewport = tree?.size ?: return
+        val viewport = engine?.size ?: return
 
         position = Vec2(viewport.width / 2f, viewport.height / 2f)
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = engine?.size ?: return
 
         val next = position + velocity * delta
 

@@ -16,8 +16,8 @@ class Pong : Node() {
     private var rightScore = 0
 
     override fun onReady() {
-        collect(tree?.root ?: return)
-        applyMode(tree?.args as? GameMode ?: GameMode.PLAYER_VS_PLAYER)
+        collect(parent ?: return)
+        applyMode(engine?.args as? GameMode ?: GameMode.PLAYER_VS_PLAYER)
     }
 
     private fun applyMode(mode: GameMode) {
@@ -32,7 +32,7 @@ class Pong : Node() {
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = engine?.size ?: return
         val ball = ball ?: return
 
         leftPaddle?.let { bounceOffPaddle(ball, it) }

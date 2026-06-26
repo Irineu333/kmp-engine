@@ -27,7 +27,8 @@ class SceneTreeInputTest {
         childA.add(grandChild)
         root.add(childB)
 
-        val tree = SceneTree(root)
+        val tree = SceneTree()
+        tree.root.add(root)
         tree.dispatchInput(KeyEvent(Key.LEFT, pressed = true))
 
         assertEquals(listOf("root", "a", "a.1", "b"), log)

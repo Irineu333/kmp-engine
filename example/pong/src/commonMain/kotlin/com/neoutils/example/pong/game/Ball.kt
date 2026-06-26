@@ -22,7 +22,7 @@ class Ball : Node2D() {
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = engine?.size ?: return
 
         if (serving) {
             position = Vec2(viewport.width / 2f, viewport.height / 2f)
@@ -44,7 +44,7 @@ class Ball : Node2D() {
         serving = true
         serveTimer = 0f
         velocity = Vec2.ZERO
-        val viewport = tree?.size ?: return
+        val viewport = engine?.size ?: return
         position = Vec2(viewport.width / 2f, viewport.height / 2f)
     }
 
