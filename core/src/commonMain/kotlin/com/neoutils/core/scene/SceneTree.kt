@@ -1,30 +1,19 @@
 package com.neoutils.core.scene
 
 import com.neoutils.core.graphics.Renderer
-import com.neoutils.core.graphics.TextMeasurer
+import com.neoutils.core.input.Input
 import com.neoutils.core.input.InputEvent
-import com.neoutils.core.input.InputState
 import com.neoutils.core.input.KeyEvent
-import com.neoutils.core.math.Size
 
 class SceneTree(
     val root: Node,
 ) {
 
-    var size: Size = Size.ZERO
-
-    var textMeasurer: TextMeasurer? = null
-
     var manager: SceneManager? = null
+        internal set
 
-    /** Payload passed to this scene via [changeScene]; null for the initial scene. */
     var args: Any? = null
-
-    val input: InputState = InputState()
-
-    fun changeScene(name: String, args: Any? = null) {
-        manager?.change(name, args)
-    }
+        internal set
 
     fun ready() {
         ready(root)
@@ -52,7 +41,7 @@ class SceneTree(
     }
 
     fun dispatchInput(event: InputEvent) {
-        if (event is KeyEvent) input.update(event)
+        if (event is KeyEvent) Input.update(event)
         dispatchInput(root, event)
     }
 

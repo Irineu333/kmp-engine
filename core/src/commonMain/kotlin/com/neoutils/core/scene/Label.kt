@@ -2,6 +2,7 @@ package com.neoutils.core.scene
 
 import com.neoutils.core.graphics.Color
 import com.neoutils.core.graphics.Renderer
+import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.math.Rect
 import com.neoutils.core.math.Size
 import com.neoutils.core.math.Vec2
@@ -13,7 +14,7 @@ open class Label : Node2D() {
     var color: Color = Color.BLUE
 
     fun getSize(): Size {
-        return tree?.textMeasurer?.measure(text, fontSize) ?: Size.ZERO
+        return Viewport.textMeasurer?.measure(text, fontSize) ?: Size.ZERO
     }
 
     override fun bounds(): Rect = Rect(Vec2.ZERO, getSize())

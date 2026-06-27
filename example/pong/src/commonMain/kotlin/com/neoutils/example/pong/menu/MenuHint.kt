@@ -1,6 +1,7 @@
 package com.neoutils.example.pong.menu
 
 import com.neoutils.core.graphics.Color
+import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.math.Vec2
 import com.neoutils.core.scene.Label
 
@@ -13,7 +14,7 @@ class MenuHint : Label() {
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = Viewport.size
         val size = getSize()
         position = Vec2(
             x = (viewport.width - size.width) / 2f,

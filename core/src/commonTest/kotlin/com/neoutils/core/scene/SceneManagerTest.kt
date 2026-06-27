@@ -70,10 +70,10 @@ class SceneManagerTest {
     }
 
     @Test
-    fun changeScene_fromTree_forwardsArgsToManager() {
+    fun change_viaTreeManager_forwardsArgs() {
         val manager = SceneManager(Game(factories))
 
-        manager.current.changeScene("game", args = 42)
+        manager.current.manager?.change("game", args = 42)
 
         assertEquals(42, manager.current.args)
     }

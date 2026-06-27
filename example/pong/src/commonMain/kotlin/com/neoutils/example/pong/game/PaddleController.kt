@@ -1,5 +1,6 @@
 package com.neoutils.example.pong.game
 
+import com.neoutils.core.input.Input
 import com.neoutils.core.input.Key
 import com.neoutils.core.scene.Node
 import kotlin.math.abs
@@ -15,10 +16,9 @@ class HumanController(
 ) : PaddleController {
 
     override fun direction(paddle: Paddle): Float {
-        val input = paddle.tree?.input ?: return 0f
         var direction = 0f
-        if (input.isPressed(upKey)) direction -= 1f
-        if (input.isPressed(downKey)) direction += 1f
+        if (Input.isPressed(upKey)) direction -= 1f
+        if (Input.isPressed(downKey)) direction += 1f
         return direction
     }
 }

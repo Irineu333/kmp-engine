@@ -1,5 +1,6 @@
 package com.neoutils.example.pong.game
 
+import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.input.Key
 import com.neoutils.core.math.Vec2
 import com.neoutils.core.scene.Node
@@ -32,7 +33,7 @@ class Pong : Node() {
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = Viewport.size
         val ball = ball ?: return
 
         leftPaddle?.let { bounceOffPaddle(ball, it) }

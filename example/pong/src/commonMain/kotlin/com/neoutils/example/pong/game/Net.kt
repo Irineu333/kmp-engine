@@ -2,6 +2,7 @@ package com.neoutils.example.pong.game
 
 import com.neoutils.core.graphics.Color
 import com.neoutils.core.graphics.Renderer
+import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.math.Vec2
 import com.neoutils.core.scene.Node
 
@@ -10,7 +11,7 @@ class Net : Node() {
     var color: Color = Color.GRAY
 
     override fun onDraw(renderer: Renderer) {
-        val viewport = tree?.size ?: return
+        val viewport = Viewport.size
         val x = viewport.width / 2f
 
         var y = 0f

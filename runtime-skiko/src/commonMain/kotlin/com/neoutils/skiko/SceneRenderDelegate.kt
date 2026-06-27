@@ -1,5 +1,7 @@
 package com.neoutils.skiko
 
+import com.neoutils.core.graphics.Viewport
+import com.neoutils.core.input.Input
 import com.neoutils.core.input.InputEvent
 import com.neoutils.core.math.Size
 import com.neoutils.core.scene.Game
@@ -16,8 +18,6 @@ class SceneRenderDelegate(
 
     private val renderer = SkikoRenderer()
 
-    private val textMeasurer = SkikoTextMeasurer()
-
     private val clock = FrameClock()
 
     private val inputEvents = InputQueue()
@@ -32,7 +32,7 @@ class SceneRenderDelegate(
         height: Int,
         nanoTime: Long
     ) {
-        // Snapshot the active scene for the whole frame: a changeScene() during
+        // Snapshot the active scene for the whole frame: a scene change during
         // process only swaps manager.current; the new scene enters next frame.
         val scene = manager.current
 
@@ -42,12 +42,11 @@ class SceneRenderDelegate(
 
         renderer.canvas = canvas
 
-        scene.size = Size(width.toFloat(), height.toFloat())
-        scene.textMeasurer = textMeasurer
+        Viewport.size = Size(width.toFloat(), height.toFloat())
 
         scene.ready()
 
-        scene.input.clearJustPressed()
+        Input.clearJustPressed()
         while (true) {
             val event = inputEvents.poll() ?: break
             scene.dispatchInput(event)

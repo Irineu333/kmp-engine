@@ -1,6 +1,7 @@
 package com.neoutils.example.keyboard
 
 import com.neoutils.core.graphics.Color
+import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.input.InputEvent
 import com.neoutils.core.input.KeyEvent
 import com.neoutils.core.math.Vec2
@@ -13,7 +14,7 @@ class KeyDisplay : Label() {
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = Viewport.size
         val size = getSize()
 
         position = Vec2(

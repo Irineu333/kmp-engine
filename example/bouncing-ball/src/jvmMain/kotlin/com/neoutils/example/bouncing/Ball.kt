@@ -1,6 +1,7 @@
 package com.neoutils.example.bouncing
 
 import com.neoutils.core.graphics.Color
+import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.scene.Node2D
 import com.neoutils.core.math.Rect
 import com.neoutils.core.graphics.Renderer
@@ -18,13 +19,13 @@ class Ball : Node2D() {
         private set
 
     override fun onReady() {
-        val viewport = tree?.size ?: return
+        val viewport = Viewport.size
 
         position = Vec2(viewport.width / 2f, viewport.height / 2f)
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = Viewport.size
 
         val next = position + velocity * delta
 

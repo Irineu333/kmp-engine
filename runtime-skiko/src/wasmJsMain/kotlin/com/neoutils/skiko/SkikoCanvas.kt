@@ -1,5 +1,6 @@
 package com.neoutils.skiko
 
+import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.input.Key
 import com.neoutils.core.input.KeyEvent
 import com.neoutils.core.scene.Game
@@ -37,6 +38,9 @@ class SkikoCanvas(
                 // The browser has no system fonts: install the bundled one before the first
                 // frame — otherwise drawText() would have no glyphs and text vanishes.
                 installTypeface(loadDefaultFont())
+
+                // Provide the global text-measuring service backed by this runtime's fonts.
+                Viewport.textMeasurer = SkikoTextMeasurer()
 
                 val delegate = SceneRenderDelegate(game)
                 val skiaLayer = SkiaLayer()

@@ -1,6 +1,7 @@
 package com.neoutils.debug
 
 import com.neoutils.core.graphics.Renderer
+import com.neoutils.core.input.Input
 import com.neoutils.core.input.InputEvent
 import com.neoutils.core.input.Key
 import com.neoutils.core.scene.Node
@@ -16,7 +17,7 @@ abstract class DebugFeature(
 
     final override fun onProcess(delta: Float) {
         shortcut?.let { key ->
-            if (tree?.input?.isJustPressed(key) == true) enabled = !enabled
+            if (Input.isJustPressed(key)) enabled = !enabled
         }
         if (enabled) process(delta)
     }

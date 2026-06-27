@@ -2,6 +2,8 @@ package com.neoutils.example.pong.menu
 
 import com.neoutils.core.graphics.Color
 import com.neoutils.core.graphics.Renderer
+import com.neoutils.core.graphics.Viewport
+import com.neoutils.core.input.Input
 import com.neoutils.core.input.Key
 import com.neoutils.core.math.Rect
 import com.neoutils.core.math.Size
@@ -27,21 +29,20 @@ class Menu : Node() {
     private var selected = 0
 
     override fun onProcess(delta: Float) {
-        val input = tree?.input ?: return
-        if (input.isJustPressed(Key.UP)) {
+        if (Input.isJustPressed(Key.UP)) {
             selected = (selected - 1 + options.size) % options.size
         }
-        if (input.isJustPressed(Key.DOWN)) {
+        if (Input.isJustPressed(Key.DOWN)) {
             selected = (selected + 1) % options.size
         }
-        if (input.isJustPressed(Key.ENTER)) {
-            tree?.changeScene("pong", options[selected].mode)
+        if (Input.isJustPressed(Key.ENTER)) {
+            tree?.manager?.change("pong", options[selected].mode)
         }
     }
 
     override fun onDraw(renderer: Renderer) {
-        val viewport = tree?.size ?: return
-        val measurer = tree?.textMeasurer ?: return
+        val viewport = Viewport.size
+        val measurer = Viewport.textMeasurer ?: return
 
         val optionHeight = measurer.measure(options[0].label, OPTION_SIZE).height
         val blockHeight = (options.size - 1) * LINE_HEIGHT + optionHeight

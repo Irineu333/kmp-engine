@@ -2,6 +2,7 @@ package com.neoutils.example.pong.game
 
 import com.neoutils.core.graphics.Color
 import com.neoutils.core.graphics.Renderer
+import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.math.Rect
 import com.neoutils.core.math.Size
 import com.neoutils.core.math.Vec2
@@ -22,7 +23,7 @@ class Ball : Node2D() {
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = Viewport.size
 
         if (serving) {
             position = Vec2(viewport.width / 2f, viewport.height / 2f)
@@ -44,7 +45,7 @@ class Ball : Node2D() {
         serving = true
         serveTimer = 0f
         velocity = Vec2.ZERO
-        val viewport = tree?.size ?: return
+        val viewport = Viewport.size
         position = Vec2(viewport.width / 2f, viewport.height / 2f)
     }
 

@@ -2,6 +2,7 @@ package com.neoutils.example.pong.game
 
 import com.neoutils.core.graphics.Color
 import com.neoutils.core.graphics.Renderer
+import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.input.Key
 import com.neoutils.core.math.Rect
 import com.neoutils.core.math.Size
@@ -18,12 +19,12 @@ class Paddle : Node2D() {
     private val halfHeight get() = HEIGHT / 2f
 
     override fun onReady() {
-        val viewport = tree?.size ?: return
+        val viewport = Viewport.size
         position = Vec2(anchorX(viewport.width), viewport.height / 2f)
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = Viewport.size
 
         val y = position.y + controller.direction(this) * SPEED * delta
 

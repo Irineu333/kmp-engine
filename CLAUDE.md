@@ -111,10 +111,10 @@ named `SceneFactory` entries (e.g. `fun pong(): Game`). The runtime turns it int
 `SceneManager`, the runtime state holding the active `SceneTree` (`manager.current`),
 starting on the first registered scene. `SceneManager` is built internally by the runtime
 (in `SceneRenderDelegate`), so games pass a `Game` to `runSkikoWindow`/`runSkikoCanvas`
-and never touch `SceneManager`. A node switches scenes via `tree?.changeScene("name")`
-(delegates to `SceneManager.change`). Each `SceneFactory.create()` rebuilds its scene from
-scratch on every switch, so re-entering a scene starts it clean. The runtime snapshots
-`manager.current` at the start of each frame, so a `changeScene` during
+and never touch `SceneManager`. A node switches scenes via `tree?.manager?.change("name")`
+(the `SceneTree` exposes the `manager` back-reference). Each `SceneFactory.create()`
+rebuilds its scene from scratch on every switch, so re-entering a scene starts it clean.
+The runtime snapshots `manager.current` at the start of each frame, so a `change` during
 `onProcess`/`onInput` takes effect on the next frame.
 
 ## Testing

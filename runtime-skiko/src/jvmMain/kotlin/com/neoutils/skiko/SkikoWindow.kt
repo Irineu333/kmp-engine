@@ -1,5 +1,6 @@
 package com.neoutils.skiko
 
+import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.input.KeyEvent
 import com.neoutils.core.scene.Game
 import com.neoutils.dsl.GameBuilder
@@ -18,6 +19,9 @@ class SkikoWindow(
 ) {
 
     fun run(game: Game) {
+
+        // Provide the global text-measuring service backed by this runtime's fonts.
+        Viewport.textMeasurer = SkikoTextMeasurer()
 
         val skiaLayer = SkiaLayer()
 

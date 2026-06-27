@@ -2,6 +2,7 @@ package com.neoutils.example.colliding
 
 import com.neoutils.core.graphics.Color
 import com.neoutils.core.graphics.Renderer
+import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.math.Rect
 import com.neoutils.core.math.Size
 import com.neoutils.core.math.Vec2
@@ -18,7 +19,7 @@ class Ball : Node2D() {
     val mass: Float get() = radius * radius
 
     override fun onReady() {
-        val viewport = tree?.size ?: return
+        val viewport = Viewport.size
 
         color = Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())
         position = Vec2.random() * Vec2(viewport.width - 2 * radius, viewport.height - 2 * radius) + Vec2(radius, radius)
@@ -26,7 +27,7 @@ class Ball : Node2D() {
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = tree?.size ?: return
+        val viewport = Viewport.size
 
         position += velocity * delta
         bounceOffWalls(viewport)
