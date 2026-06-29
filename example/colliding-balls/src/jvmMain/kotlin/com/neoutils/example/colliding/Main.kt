@@ -2,6 +2,7 @@ package com.neoutils.example.colliding
 
 import com.neoutils.core.graphics.Color
 import com.neoutils.core.scene.Game
+import com.neoutils.core.node.CollisionWorld
 import com.neoutils.core.node.Node
 import com.neoutils.core.scene.SceneTree
 import com.neoutils.debug.DebugLayer
@@ -17,7 +18,7 @@ fun main() {
         root.add(Ball())
     }
 
-    root.add(BallCollider())
+    root.add(CollisionWorld())
 
     root.add(
         DebugLayer().apply {

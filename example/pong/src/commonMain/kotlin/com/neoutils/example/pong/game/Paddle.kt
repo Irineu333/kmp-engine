@@ -5,8 +5,10 @@ import com.neoutils.core.graphics.Renderer
 import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.input.Key
 import com.neoutils.core.math.Rect
+import com.neoutils.core.math.Shape
 import com.neoutils.core.math.Size
 import com.neoutils.core.math.Vec2
+import com.neoutils.core.node.Collider
 import com.neoutils.core.node.Node2D
 
 class Paddle : Node2D() {
@@ -17,6 +19,11 @@ class Paddle : Node2D() {
 
     private val halfWidth get() = WIDTH / 2f
     private val halfHeight get() = HEIGHT / 2f
+
+    init {
+        // Detected by the ball's collider; the paddle itself doesn't react.
+        add(Collider(Shape.Aabb(Size(WIDTH, HEIGHT))))
+    }
 
     override fun onReady() {
         val viewport = Viewport.size

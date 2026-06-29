@@ -3,9 +3,12 @@ package com.neoutils.example.colliding
 import com.neoutils.core.graphics.Color
 import com.neoutils.core.graphics.Renderer
 import com.neoutils.core.graphics.Viewport
+import com.neoutils.core.math.Collision
 import com.neoutils.core.math.Rect
+import com.neoutils.core.math.Shape
 import com.neoutils.core.math.Size
 import com.neoutils.core.math.Vec2
+import com.neoutils.core.node.Collider
 import com.neoutils.core.node.Node2D
 import kotlin.random.Random
 
@@ -16,6 +19,10 @@ class Ball : Node2D() {
     var velocity: Vec2 = Vec2.ZERO
 
     val mass: Float get() = radius * radius
+
+    init {
+        add(Body())
+    }
 
     override fun onReady() {
         val viewport = Viewport.size
@@ -52,6 +59,25 @@ class Ball : Node2D() {
 
     override fun onDraw(renderer: Renderer) {
         renderer.drawCircle(globalPosition(), radius, color)
+    }
+
+    private inner class Body : Collider(Shape.Circle(radius)) {
+        override fun onCollision(other: Collider, hit: Collision) {
+            val target = other.parent as? Ball ?: return
+
+            // Each side pushes its own share out of the overlap (lighter moves more).
+            val totalMass = mass + target.mass
+            position -= hit.normal * (hit.depth * target.mass / totalMass)
+
+            // Impulse applied to both balls; gating on the approach sign makes the
+            // other collider's notification a no-op.
+            val approach = (velocity - target.velocity).dot(hit.normal)
+            if (approach > 0f) {
+                val impulse = 2f * approach / (1f / mass + 1f / target.mass)
+                velocity -= hit.normal * (impulse / mass)
+                target.velocity += hit.normal * (impulse / target.mass)
+            }
+        }
     }
 
     companion object {

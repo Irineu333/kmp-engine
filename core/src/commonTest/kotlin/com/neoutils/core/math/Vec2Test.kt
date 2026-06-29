@@ -58,6 +58,12 @@ class Vec2Test {
     }
 
     @Test
+    fun unaryMinus_ofZero_isPositiveZero() {
+        // Guards structural equality: -0.0 would not equal 0.0.
+        assertEquals(Vec2(-1f, 0f), -Vec2(1f, 0f))
+    }
+
+    @Test
     fun randomVelocity_hasRequestedMagnitude() {
         val speed = 320f
         val velocity = Vec2.randomVelocity(speed)

@@ -24,6 +24,8 @@ open class Node {
 
     open fun onProcess(delta: Float) {}
 
+    open fun onPhysicsProcess(delta: Float) {}
+
     open fun onInput(event: InputEvent) {}
 
     open fun onDraw(renderer: Renderer) {}

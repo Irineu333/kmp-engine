@@ -15,7 +15,9 @@ data class Vec2(
 
     operator fun minus(other: Vec2) = Vec2(x - other.x, y - other.y)
 
-    operator fun unaryMinus() = Vec2(-x, -y)
+    // `0f - x` instead of `-x` so negating a zero yields +0.0, not -0.0
+    // (which would break structural equality on the resulting vector).
+    operator fun unaryMinus() = Vec2(0f - x, 0f - y)
 
     operator fun times(scalar: Float) = Vec2(x * scalar, y * scalar)
 

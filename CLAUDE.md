@@ -34,7 +34,7 @@ example/*  ─→  core-debug ────→ core-dsl ─→ core
 
 | Module | Role |
 |---|---|
-| `core` | Nodes, scene tree, `Game` (the public scene-set IR) + `SceneManager` (runtime scene switching, built from a `Game`), abstract `Renderer`, frame clock, value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`; targets `jvm` + `wasmJs`. |
+| `core` | Nodes, scene tree, `Game` (the public scene-set IR) + `SceneManager` (runtime scene switching, built from a `Game`), abstract `Renderer`, frame clock + fixed-step physics clock (`FixedStep`), opt-in collision (`Shape`/`intersect`/`Collision`, `Collider`, `CollisionWorld`), value types (`Vec2`, `Color`, `Rect`, `Size`). Pure `commonMain`; targets `jvm` + `wasmJs`. |
 | `core-dsl` | Scene-building DSL via `ScenesBuilder`. `commonMain` exposes a reflection-free builder (`add(::Node) { }`); `jvmMain` adds the reflection-based `add<Node>()` overload (`kotlin-reflect`, JVM-only). |
 | `core-debug` | Optional, backend-agnostic debug toolkit. `DebugFeature` (toggleable `Node` base with a keyboard `shortcut`), `DebugLayer` (container) and built-in `FpsFeature` (F1) / `BoundsFeature` (F2). The `Node.debug { }` builder injects a `DebugLayer` under a scene root; games drop their own `DebugFeature`s into the block. Pure `commonMain`; targets `jvm` + `wasmJs`. Engine code never references it — debug is fully opt-in. |
 | `runtime-skiko` | `Renderer` + window implementation via Skiko. Shared Skia drawing (`SkikoRenderer`, `SceneRenderDelegate`) lives in `commonMain`; the window/keyboard layer is per-target: `jvmMain` (Swing/AWT `SkikoWindow`), `wasmJsMain` (`SkikoCanvas`: a `SkiaLayer` on an HTML `<canvas>` + DOM key events). Exposes `runSkikoWindow { scene(...) { } }` (JVM) / `runSkikoCanvas { scene(...) { } }` (wasm). |
@@ -90,9 +90,29 @@ Nodes extend `Node` (or `Node2D`) and override:
   propagates each one through the tree at the start of a frame, before `onProcess`.
   For continuous input, poll the derived state instead: `tree.input.isPressed(key)` /
   `tree.input.isJustPressed(key)` (read inside `onProcess`).
+- `onPhysicsProcess(delta: Float)` — the physics phase; runs **after** `onProcess`
+  and before draw, in fixed steps (`FixedStep`, 1/60 s) so it can run 0..N times per
+  frame with a constant `delta`, decoupled from the variable frame rate. This is where
+  `CollisionWorld` detects overlaps. Movement stays in `onProcess` (variable delta).
 - `onDraw(renderer: Renderer)` — per frame; draw via the `Renderer`.
 
 `SceneTree` walks the tree depth-first for each phase.
+
+## Collision (opt-in)
+
+Detection lives in `core` and is opt-in — nothing runs unless a scene adds a
+`CollisionWorld`. A `Collider(shape)` is an open `Node2D` child whose `Shape`
+(`Circle`/`Aabb`) is centered on its `globalPosition()`; subclass it and override
+`onCollision(other, hit)` to respond. During the physics
+phase `CollisionWorld` runs an O(n²) sweep (`intersect`, pure math in
+`core/math/Collision.kt`) and notifies **both** colliders, the `hit.normal` pointing
+from each toward the other. The engine only *detects*; response is the game's job.
+Since both sides fire, a response that resolves a symmetric pair (reading the other's
+mutable state) must be **atomic and idempotent** — compute from both current states
+and gate on the approach sign so the second notification is a no-op (see
+`colliding-balls`' `elasticVelocities`, mass-weighted and momentum/energy-conserving).
+A purely local response (adjusting only this node) is the simple case — see `pong`'s
+angular reflection off paddles.
 
 ## Scenes & scene switching
 

@@ -1,5 +1,6 @@
 package com.neoutils.example.pong
 
+import com.neoutils.core.node.CollisionWorld
 import com.neoutils.core.scene.Game
 import com.neoutils.debug.debug
 import com.neoutils.dsl.add
@@ -36,6 +37,7 @@ fun pong(): Game = game {
             side = Side.RIGHT
         }
         add(::Pong)
+        add(::CollisionWorld)
         add(::ReturnToMenu)
 
         debug {

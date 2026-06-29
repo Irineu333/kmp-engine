@@ -41,6 +41,17 @@ class SceneTree(
         }
     }
 
+    fun physicsProcess(delta: Float) {
+        physicsProcess(root, delta)
+    }
+
+    private fun physicsProcess(node: Node, delta: Float) {
+        node.onPhysicsProcess(delta)
+        node.children.forEach {
+            physicsProcess(it, delta)
+        }
+    }
+
     fun dispatchInput(event: InputEvent) {
         if (event is KeyEvent) Input.update(event)
         dispatchInput(root, event)
