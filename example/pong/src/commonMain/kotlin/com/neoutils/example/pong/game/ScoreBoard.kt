@@ -20,7 +20,7 @@ class ScoreBoard : Label() {
 
         val centerX = if (side == Side.LEFT) viewport.width / 4f else viewport.width * 3f / 4f
         position = Vec2(
-            x = centerX - size.width / 2f,
+            x = centerX - size.center().x,
             y = TOP_MARGIN,
         )
     }

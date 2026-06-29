@@ -4,7 +4,6 @@ import com.neoutils.core.graphics.Color
 import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.input.InputEvent
 import com.neoutils.core.input.KeyEvent
-import com.neoutils.core.math.Vec2
 import com.neoutils.core.node.Label
 
 class KeyDisplay : Label() {
@@ -14,13 +13,7 @@ class KeyDisplay : Label() {
     }
 
     override fun onProcess(delta: Float) {
-        val viewport = Viewport.size
-        val size = getSize()
-
-        position = Vec2(
-            x = (viewport.width - size.width) / 2f,
-            y = (viewport.height - size.height) / 2f,
-        )
+        position = Viewport.size.center(getSize())
     }
 
     override fun onInput(event: InputEvent) {

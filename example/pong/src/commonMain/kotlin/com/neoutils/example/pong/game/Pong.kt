@@ -4,6 +4,8 @@ import com.neoutils.core.graphics.Viewport
 import com.neoutils.core.input.Key
 import com.neoutils.core.math.Vec2
 import com.neoutils.core.node.Node
+import com.neoutils.core.node.findAll
+import com.neoutils.core.node.findFirst
 
 class Pong : Node() {
 
@@ -17,7 +19,18 @@ class Pong : Node() {
     private var rightScore = 0
 
     override fun onReady() {
-        collect(tree?.root ?: return)
+        val root = tree?.root ?: return
+
+        val paddles = root.findAll<Paddle>()
+        leftPaddle = paddles.firstOrNull { it.side == Side.LEFT }
+        rightPaddle = paddles.firstOrNull { it.side == Side.RIGHT }
+
+        ball = root.findFirst<Ball>()
+
+        val boards = root.findAll<ScoreBoard>()
+        leftBoard = boards.firstOrNull { it.side == Side.LEFT }
+        rightBoard = boards.firstOrNull { it.side == Side.RIGHT }
+
         applyMode(tree?.args as? GameMode ?: GameMode.PLAYER_VS_PLAYER)
     }
 
@@ -85,15 +98,6 @@ class Pong : Node() {
             leftBoard?.text = "$leftScore"
         }
         ball?.serve()
-    }
-
-    private fun collect(node: Node) {
-        when (node) {
-            is Paddle -> if (node.side == Side.LEFT) leftPaddle = node else rightPaddle = node
-            is Ball -> ball = node
-            is ScoreBoard -> if (node.side == Side.LEFT) leftBoard = node else rightBoard = node
-        }
-        node.children.forEach { collect(it) }
     }
 
     companion object {

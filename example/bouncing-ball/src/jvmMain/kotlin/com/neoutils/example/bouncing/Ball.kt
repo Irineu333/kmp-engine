@@ -7,15 +7,13 @@ import com.neoutils.core.math.Rect
 import com.neoutils.core.graphics.Renderer
 import com.neoutils.core.math.Size
 import com.neoutils.core.math.Vec2
-import kotlin.math.PI
-import kotlin.random.Random
 
 class Ball : Node2D() {
 
     var radius: Float = 32f
     var color: Color = Color.RED
 
-    var velocity = Vec2.fromAngle(Random.nextFloat() * 2f * PI.toFloat()) * 320f
+    var velocity = Vec2.randomVelocity(320f)
         private set
 
     override fun onReady() {
@@ -29,19 +27,17 @@ class Ball : Node2D() {
 
         val next = position + velocity * delta
 
-        velocity = Vec2(
-            reflect(next.x, velocity.x, viewport.width),
-            reflect(next.y, velocity.y, viewport.height),
-        )
+        if (next.x - radius <= 0f || next.x + radius >= viewport.width) {
+            velocity = velocity.reflect(Vec2(1f, 0f))
+        }
+        if (next.y - radius <= 0f || next.y + radius >= viewport.height) {
+            velocity = velocity.reflect(Vec2(0f, 1f))
+        }
 
         position = Vec2(
             next.x.coerceIn(radius, viewport.width - radius),
             next.y.coerceIn(radius, viewport.height - radius),
         )
-    }
-
-    private fun reflect(value: Float, velocity: Float, limit: Float): Float {
-        return if (value - radius <= 0f || value + radius >= limit) -velocity else velocity
     }
 
     override fun bounds(): Rect = Rect(

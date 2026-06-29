@@ -4,7 +4,7 @@ import com.neoutils.core.graphics.Color
 import com.neoutils.core.graphics.Renderer
 import com.neoutils.core.input.Key
 import com.neoutils.core.math.Vec2
-import com.neoutils.core.node.Node
+import com.neoutils.core.node.findAll
 import com.neoutils.debug.DebugFeature
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -18,12 +18,12 @@ class VelocityOverlay : DebugFeature(shortcut = Key.F3, enabled = false) {
     var headLength: Float = 12f
 
     override fun draw(renderer: Renderer) {
-        drawVelocities(tree?.root ?: return, renderer)
-    }
+        val root = tree?.root ?: return
 
-    private fun drawVelocities(node: Node, renderer: Renderer) {
-        if (node is Ball) drawArrow(node, renderer)
-        node.children.forEach { drawVelocities(it, renderer) }
+        root.findAll<Ball>()
+            .forEach {
+                drawArrow(it, renderer)
+            }
     }
 
     private fun drawArrow(ball: Ball, renderer: Renderer) {

@@ -1,24 +1,16 @@
 package com.neoutils.example.colliding
 
 import com.neoutils.core.node.Node
+import com.neoutils.core.node.findAll
 
 class BallCollider : Node() {
 
     override fun onProcess(delta: Float) {
-        val balls = collect(tree?.root ?: return)
+        val balls = tree?.root?.findAll<Ball>() ?: return
 
         for (i in balls.indices) {
             for (j in i + 1 until balls.size) {
                 resolve(balls[i], balls[j])
-            }
-        }
-    }
-
-    private fun collect(node: Node): List<Ball> {
-        return buildList {
-            if (node is Ball) add(node)
-            node.children.forEach {
-                addAll(collect(it))
             }
         }
     }

@@ -35,7 +35,7 @@ class Ball : Node2D() {
         position += velocity * delta
 
         if (position.y - radius < 0f || position.y + radius > viewport.height) {
-            velocity = velocity.copy(y = -velocity.y)
+            velocity = velocity.reflect(Vec2(0f, 1f))
             position = position.copy(y = position.y.coerceIn(radius, viewport.height - radius))
         }
     }

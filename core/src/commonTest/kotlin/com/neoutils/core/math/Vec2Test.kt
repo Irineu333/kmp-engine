@@ -39,4 +39,29 @@ class Vec2Test {
     fun dot_matchesComponentSum() {
         assertEquals(11f, Vec2(1f, 2f).dot(Vec2(3f, 4f)))
     }
+
+    @Test
+    fun reflect_offHorizontalNormal_flipsX() {
+        assertEquals(Vec2(-3f, 4f), Vec2(3f, 4f).reflect(Vec2(1f, 0f)))
+    }
+
+    @Test
+    fun reflect_offVerticalNormal_flipsY() {
+        assertEquals(Vec2(3f, -4f), Vec2(3f, 4f).reflect(Vec2(0f, 1f)))
+    }
+
+    @Test
+    fun reflect_preservesMagnitude() {
+        val reflected = Vec2(3f, 4f).reflect(Vec2(1f, 0f).normalized())
+
+        assertEquals(5f, reflected.length())
+    }
+
+    @Test
+    fun randomVelocity_hasRequestedMagnitude() {
+        val speed = 320f
+        val velocity = Vec2.randomVelocity(speed)
+
+        assertTrue(kotlin.math.abs(velocity.length() - speed) < 1e-3f)
+    }
 }

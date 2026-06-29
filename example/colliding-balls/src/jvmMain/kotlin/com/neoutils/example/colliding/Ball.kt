@@ -7,7 +7,6 @@ import com.neoutils.core.math.Rect
 import com.neoutils.core.math.Size
 import com.neoutils.core.math.Vec2
 import com.neoutils.core.node.Node2D
-import kotlin.math.PI
 import kotlin.random.Random
 
 class Ball : Node2D() {
@@ -23,7 +22,7 @@ class Ball : Node2D() {
 
         color = Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())
         position = Vec2.random() * Vec2(viewport.width - 2 * radius, viewport.height - 2 * radius) + Vec2(radius, radius)
-        velocity = Vec2.fromAngle(Random.nextFloat() * 2f * PI.toFloat()) * (MIN_SPEED + Random.nextFloat() * (MAX_SPEED - MIN_SPEED))
+        velocity = Vec2.randomVelocity(MIN_SPEED + Random.nextFloat() * (MAX_SPEED - MIN_SPEED))
     }
 
     override fun onProcess(delta: Float) {
@@ -35,10 +34,10 @@ class Ball : Node2D() {
 
     private fun bounceOffWalls(viewport: Size) {
         if (position.x - radius < 0f || position.x + radius > viewport.width) {
-            velocity = velocity.copy(x = -velocity.x)
+            velocity = velocity.reflect(Vec2(1f, 0f))
         }
         if (position.y - radius < 0f || position.y + radius > viewport.height) {
-            velocity = velocity.copy(y = -velocity.y)
+            velocity = velocity.reflect(Vec2(0f, 1f))
         }
         position = Vec2(
             position.x.coerceIn(radius, viewport.width - radius),

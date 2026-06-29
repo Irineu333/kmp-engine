@@ -1,5 +1,6 @@
 package com.neoutils.core.math
 
+import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -37,11 +38,18 @@ data class Vec2(
     /** Dot product with [other]. */
     fun dot(other: Vec2): Float = x * other.x + y * other.y
 
+    /** Reflects this vector off a surface with the given unit [normal]. */
+    fun reflect(normal: Vec2): Vec2 = this - normal * (2f * dot(normal))
+
     companion object {
         val ZERO: Vec2 = Vec2(0f, 0f)
         val ONE: Vec2 = Vec2(1f, 1f)
 
         fun random(): Vec2 = Vec2(Random.nextFloat(), Random.nextFloat())
         fun fromAngle(radians: Float): Vec2 = Vec2(cos(radians), sin(radians))
+
+        /** A vector with random direction and the given [speed] magnitude. */
+        fun randomVelocity(speed: Float = 1f): Vec2 =
+            fromAngle(Random.nextFloat() * 2f * PI.toFloat()) * speed
     }
 }

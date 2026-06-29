@@ -17,7 +17,7 @@ class MenuTitle : Label() {
         val viewport = Viewport.size
         val size = getSize()
         position = Vec2(
-            x = (viewport.width - size.width) / 2f,
+            x = viewport.center(size).x,
             y = viewport.height / 2f - size.height - OFFSET,
         )
     }
